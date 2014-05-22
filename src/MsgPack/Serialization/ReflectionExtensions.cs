@@ -121,7 +121,10 @@ namespace MsgPack.Serialization
 
 				// Block to limit variable scope
 				{
-					var ienumetaorT = getEnumerator.ReturnType.GetInterfaces().FirstOrDefault( @interface => @interface.GetIsGenericType() && @interface.GetGenericTypeDefinition() == typeof( IEnumerator<> ) );
+					var ienumetaorT =
+						IsIEnumeratorT(getEnumerator.ReturnType)
+						? getEnumerator.ReturnType
+						: getEnumerator.ReturnType.GetInterfaces().FirstOrDefault( IsIEnumeratorT );
 					if ( ienumetaorT != null )
 					{
 						var elementType = ienumetaorT.GetGenericArguments()[ 0 ];
@@ -130,7 +133,7 @@ namespace MsgPack.Serialization
 								CollectionKind.Array,
 								GetAddMethod( source, elementType ),
 								getEnumerator,
-								null,
+								GetCollectionTCountProperty( source, elementType ),
 								elementType
 							);
 					}
@@ -141,7 +144,22 @@ namespace MsgPack.Serialization
 			Type idictionaryT = null;
 			Type ienumerable = null;
 			Type idictionary = null;
-			foreach ( var type in source.FindInterfaces( FilterCollectionType, null ) )
+
+			var sourceInterfaces = source.FindInterfaces( FilterCollectionType, null );
+			if ( source.GetIsInterface() && FilterCollectionType( source, null ) )
+			{
+				var originalSourceInterfaces = sourceInterfaces.ToArray();
+				var concatenatedSourceInterface = new Type[ originalSourceInterfaces.Length + 1 ];
+				concatenatedSourceInterface[ 0 ] = source;
+				for ( int i = 0; i < originalSourceInterfaces.Length; i++ )
+				{
+					concatenatedSourceInterface[ i + 1 ] = originalSourceInterfaces[ i ];
+				}
+
+				sourceInterfaces = concatenatedSourceInterface;
+			}
+
+			foreach ( var type in sourceInterfaces )
 			{
 				if ( type == typeof( IDictionary<MessagePackObject, MessagePackObject> ) )
 				{
@@ -370,6 +388,10 @@ namespace MsgPack.Serialization
 #endif
 		}
 
+		private static bool IsIEnumeratorT( Type @interface )
+		{
+			return @interface.GetIsGenericType() && @interface.GetGenericTypeDefinition() == typeof( IEnumerator<> );
+		}
 #if WINDOWS_PHONE
 		public static IEnumerable<Type> FindInterfaces( this Type source, Func<Type, object, bool> filter, object criterion )
 		{

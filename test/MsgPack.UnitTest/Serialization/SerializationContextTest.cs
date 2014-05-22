@@ -23,8 +23,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+using MsgPack.Serialization.DefaultSerializers;
+using MsgPack.Serialization.EmittingSerializers;
 #if !MSTEST
 using NUnit.Framework;
 #else
@@ -38,7 +42,7 @@ using Is = NUnit.Framework.Is;
 namespace MsgPack.Serialization
 {
 	[TestFixture]
-	[Timeout( 15000 )]
+	//[Timeout( 15000 )]
 	public class SerializationContextTest
 	{
 		[Test]
@@ -88,7 +92,9 @@ namespace MsgPack.Serialization
 		{
 			var context = new SerializationContext();
 			Assert.That( context.DefaultCollectionTypes.Get( typeof( IList<> ) ), Is.EqualTo( typeof( List<> ) ) );
+#if !NETFX_35
 			Assert.That( context.DefaultCollectionTypes.Get( typeof( ISet<> ) ), Is.EqualTo( typeof( HashSet<> ) ) );
+#endif
 			Assert.That( context.DefaultCollectionTypes.Get( typeof( ICollection<> ) ), Is.EqualTo( typeof( List<> ) ) );
 			Assert.That( context.DefaultCollectionTypes.Get( typeof( IEnumerable<> ) ), Is.EqualTo( typeof( List<> ) ) );
 			Assert.That( context.DefaultCollectionTypes.Get( typeof( IDictionary<,> ) ), Is.EqualTo( typeof( Dictionary<,> ) ) );
@@ -182,6 +188,87 @@ namespace MsgPack.Serialization
 			Assert.Throws<ArgumentException>( () => context.DefaultCollectionTypes.Register( typeof( IList<string> ), typeof( List<> ) ) );
 		}
 
+		[Test]
+		public void TestIssue24()
+		{
+			var context = new SerializationContext();
+			context.Serializers.RegisterOverride( new NetDateTimeSerializer() );
+			using ( var buffer = new MemoryStream() )
+			{
+				var serializer = MessagePackSerializer.Create<DateTime>( context );
+				var dt = new DateTime( 999999999999999999L, DateTimeKind.Utc );
+				serializer.Pack( buffer, dt );
+				buffer.Position = 0;
+				var result = serializer.Unpack( buffer );
+				Assert.That( result, Is.EqualTo( dt ) );
+			}
+		}
+
+		[Test]
+		public void TestIssue27_Dictionary()
+		{
+			var context = new SerializationContext();
+			using ( var buffer = new MemoryStream() )
+			{
+				var serializer = MessagePackSerializer.Create<IDictionary<String, String>>( context );
+				var dic = new Dictionary<string, string> { { "A", "A" } };
+				serializer.Pack( buffer, dic );
+				buffer.Position = 0;
+
+				var result = serializer.Unpack( buffer );
+
+				Assert.That( result.Count, Is.EqualTo( 1 ) );
+				Assert.That( result[ "A" ], Is.EqualTo( "A" ) );
+			}
+		}
+
+		[Test]
+		public void TestIssue27_List()
+		{
+			var context = new SerializationContext();
+			using ( var buffer = new MemoryStream() )
+			{
+				var serializer = MessagePackSerializer.Create<IList<String>>( context );
+				var list = new List<string> { "A" };
+				serializer.Pack( buffer, list );
+				buffer.Position = 0;
+				var result = serializer.Unpack( buffer );
+
+				Assert.That( result.Count, Is.EqualTo( 1 ) );
+				Assert.That( result[ 0 ], Is.EqualTo( "A" ) );
+			}
+		}
+
+
+		[Test]
+		public void TestIssue27_Collection()
+		{
+			var context = new SerializationContext();
+			using ( var buffer = new MemoryStream() )
+			{
+				var serializer = MessagePackSerializer.Create<ICollection<string>>( context );
+				var list = new List<string> { "A" };
+				serializer.Pack( buffer, list );
+				buffer.Position = 0;
+				var result = serializer.Unpack( buffer );
+
+				Assert.That( result.Count, Is.EqualTo( 1 ) );
+				Assert.That( result.First(), Is.EqualTo( "A" ) );
+			}
+		}
+		private sealed class NetDateTimeSerializer : MessagePackSerializer<DateTime>
+		{
+			protected internal override void PackToCore( Packer packer, DateTime objectTree )
+			{
+				packer.Pack( objectTree.ToUniversalTime().Ticks );
+			}
+
+			protected internal override DateTime UnpackFromCore( Unpacker unpacker )
+			{
+				return new DateTime( unpacker.LastReadData.AsInt64(), DateTimeKind.Utc );
+			}
+		}
+
 		private sealed class ConcurrentHelper<T> : IDisposable
 			where T : class
 		{
@@ -250,7 +337,7 @@ namespace MsgPack.Serialization
 
 		public abstract class NewAbstractCollection<T> : Collection<T>
 		{
-			
+
 		}
 
 		public sealed class NewConcreteCollection<T> : NewAbstractCollection<T>
