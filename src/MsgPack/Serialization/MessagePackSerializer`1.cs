@@ -203,6 +203,11 @@ namespace MsgPack.Serialization
 			return this.UnpackFrom( unpacker );
 		}
 
+		public object UnpackObject( Stream stream )
+		{
+			return Unpack( stream );
+		}
+
 		/// <summary>
 		///		Serializes specified object with specified <see cref="Packer"/>.
 		/// </summary>
