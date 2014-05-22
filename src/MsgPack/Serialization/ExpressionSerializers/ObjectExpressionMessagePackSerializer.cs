@@ -542,6 +542,16 @@ namespace MsgPack.Serialization.ExpressionSerializers
 			{
 			}
 
+			public object UnpackObject( Stream stream )
+			{
+				if ( stream == null )
+				{
+					throw new ArgumentNullException( "stream" );
+				}
+
+				return null;
+			}
+
 			public void PackTo( Packer packer, object objectTree )
 			{
 				if ( packer == null )
