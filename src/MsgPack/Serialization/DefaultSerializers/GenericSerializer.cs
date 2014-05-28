@@ -111,7 +111,7 @@ namespace MsgPack.Serialization.DefaultSerializers
 
 		private static MessagePackSerializer<T> TryCreateImmutableCollectionSerializer<T>( SerializationContext context )
 		{
-#if NETFX_35 || NETFX_40 || SILVERLIGHT
+#if NETFX_35 || NETFX_40 || SILVERLIGHT || NET35
 			// ImmutableCollections does not support above platforms.
 			return null;
 #else
@@ -178,14 +178,14 @@ namespace MsgPack.Serialization.DefaultSerializers
 			if ( abstractType.GetGenericTypeDefinition() == typeof( IList<> ) )
 			{
 				serializerType = typeof( ListSerializer<> ).MakeGenericType( abstractType.GetGenericArguments()[ 0 ] );
-			}
-#if !NETFX_35
+            }
+#if !NETFX_35 && !NET35
 			else if ( abstractType.GetGenericTypeDefinition() == typeof( ISet<> ) )
 			{
 				serializerType = typeof( SetSerializer<> ).MakeGenericType( abstractType.GetGenericArguments()[ 0 ] );
 			}
 #endif // !NETFX_35
-			else if ( abstractType.GetGenericTypeDefinition() == typeof( ICollection<> ) )
+            else if ( abstractType.GetGenericTypeDefinition() == typeof( ICollection<> ) )
 			{
 				serializerType = typeof( CollectionSerializer<> ).MakeGenericType( abstractType.GetGenericArguments()[ 0 ] );
 			}

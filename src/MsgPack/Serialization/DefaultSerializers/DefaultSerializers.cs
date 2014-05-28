@@ -597,7 +597,7 @@ namespace MsgPack.Serialization.DefaultSerializers
 
 
 
-#if !WINDOWS_PHONE && !NETFX_35
+#if !WINDOWS_PHONE && !NETFX_35 && !NET35
 
 	internal sealed class System_Numerics_BigIntegerMessagePackSerializer : MessagePackSerializer< System.Numerics.BigInteger >
 	{

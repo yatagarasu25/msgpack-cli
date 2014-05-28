@@ -62,7 +62,7 @@ namespace MsgPack.Serialization.EmittingSerializers
 				};
 
 			string typeName =
-#if !NETFX_35
+#if !NETFX_35 && !NET35
  String.Join(
 					Type.Delimiter.ToString( CultureInfo.InvariantCulture ),
 					typeof( SerializerEmitter ).Namespace,
@@ -70,7 +70,7 @@ namespace MsgPack.Serialization.EmittingSerializers
 					IdentifierUtility.EscapeTypeName( targetType ) + "Serializer" + sequence
 					);
 #else
-				String.Join(
+ String.Join(
 					Type.Delimiter.ToString(),
 					new string[]
 					{

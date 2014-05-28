@@ -33,10 +33,10 @@ namespace MsgPack
 	internal static class SetOperation
 	{
 		[Pure]
-#if NETFX_35
+#if NETFX_35 || NET35
 		public static bool IsProperSubsetOf<T>( ICollection<T> set, IEnumerable<T> other )
 #else
-		public static bool IsProperSubsetOf<T>( ISet<T> set, IEnumerable<T> other )
+        public static bool IsProperSubsetOf<T>( ISet<T> set, IEnumerable<T> other )
 #endif
 		{
 			#region CONTRACT
@@ -72,7 +72,7 @@ namespace MsgPack
 		}
 
 		[Pure]
-#if NETFX_35
+#if NETFX_35 || NET35
 		public static bool IsSubsetOf<T>( ICollection<T> set, IEnumerable<T> other )
 #else
 		public static bool IsSubsetOf<T>( ISet<T> set, IEnumerable<T> other )
@@ -103,7 +103,7 @@ namespace MsgPack
 		}
 
 		[Pure]
-#if NETFX_35
+#if NETFX_35 || NET35
 		private static bool IsSubsetOfCore<T>( ICollection<T> set, IEnumerable<T> other, out int otherCount )
 #else
 		private static bool IsSubsetOfCore<T>( ISet<T> set, IEnumerable<T> other, out int otherCount )
@@ -113,7 +113,7 @@ namespace MsgPack
 
 			// Other must be set to handle duplicated items.
 			// e.x., [1,2,3] is proper subset of [1,2,3,4,1] but not [1,1,1,1,1]
-#if NETFX_35
+#if NETFX_35 || NET35
 			var asSet = other as HashSet<T>;
 #else
 			var asSet = other as ISet<T>;
@@ -140,7 +140,7 @@ namespace MsgPack
 		}
 
 		[Pure]
-#if NETFX_35
+#if NETFX_35 || NET35
 		public static bool IsProperSupersetOf<T>( ICollection<T> set, IEnumerable<T> other )
 #else
 		public static bool IsProperSupersetOf<T>( ISet<T> set, IEnumerable<T> other )
@@ -174,7 +174,7 @@ namespace MsgPack
 		}
 
 		[Pure]
-#if NETFX_35
+#if NETFX_35 || NET35
 		public static bool IsSupersetOf<T>( ICollection<T> set, IEnumerable<T> other )
 #else
 		public static bool IsSupersetOf<T>( ISet<T> set, IEnumerable<T> other )
@@ -208,7 +208,7 @@ namespace MsgPack
 		}
 
 		[Pure]
-#if NETFX_35
+#if NETFX_35 || NET35
 		private static bool IsSupersetOfCore<T>( ICollection<T> set, IEnumerable<T> other, out int otherCount )
 #else
 		private static bool IsSupersetOfCore<T>( ISet<T> set, IEnumerable<T> other, out int otherCount )
@@ -218,7 +218,7 @@ namespace MsgPack
 
 			// Other must be set to handle duplicated items.
 			// e.x., [1,2,3] is proper superset of [1,2] and [1,2,1]
-#if NETFX_35
+#if NETFX_35 || NET35
 			var asSet = other as HashSet<T>;
 #else
 			var asSet = other as ISet<T>;
@@ -243,7 +243,7 @@ namespace MsgPack
 		}
 
 		[Pure]
-#if NETFX_35
+#if NETFX_35 || NET35
 		public static bool Overlaps<T>( ICollection<T> set, IEnumerable<T> other )
 #else
 		public static bool Overlaps<T>( ISet<T> set, IEnumerable<T> other )
@@ -267,7 +267,7 @@ namespace MsgPack
 		}
 
 		[Pure]
-#if NETFX_35
+#if NETFX_35 || NET35
 		public static bool SetEquals<T>( ICollection<T> set, IEnumerable<T> other )
 #else
 		public static bool SetEquals<T>( ISet<T> set, IEnumerable<T> other )
@@ -292,7 +292,7 @@ namespace MsgPack
 			}
 
 			// Cannot use other.All() here because it always returns true for empty source.
-#if NETFX_35
+#if NETFX_35 || NET35
 			var asSet = other as HashSet<T> ?? new HashSet<T>( other );
 #else
 			var asSet = other as ISet<T> ?? new HashSet<T>( other );

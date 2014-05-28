@@ -37,11 +37,11 @@ namespace MsgPack.Serialization
 		/// <param name="targetMemberName">Name of the target member.</param>
 		/// <returns>Name of the method.</returns>
 		public static string BuildMethodName( string operation, Type targetType, string targetMemberName )
-		{
-#if !NETFX_35
+        {
+#if !NETFX_35 && !NET35
 			return String.Join( "_", operation, EscapeTypeName( targetType ), targetMemberName );
 #else
-			return String.Join( "_", new string[] { operation, EscapeTypeName( targetType ), targetMemberName } );
+            return String.Join( "_", new string[] { operation, EscapeTypeName( targetType ), targetMemberName } );
 #endif
 		}
 

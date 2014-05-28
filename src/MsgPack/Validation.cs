@@ -35,13 +35,13 @@ namespace MsgPack
 	internal static class Validation
 	{
 		public static void ValidateBuffer<T>( T[] byteArray, int offset, long length, string nameOfByteArray, string nameOfLength, bool validateBufferSize )
-		{
-#if  !NETFX_35
+        {
+#if  !NETFX_35 && !NET35
 			Contract.Assume( !String.IsNullOrWhiteSpace( nameOfByteArray ) );
 			Contract.Assume( !String.IsNullOrWhiteSpace( nameOfLength ) );
 #endif
 
-			if ( byteArray == null )
+            if ( byteArray == null )
 			{
 				throw new ArgumentNullException( nameOfByteArray );
 			}

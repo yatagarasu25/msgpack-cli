@@ -86,10 +86,10 @@ namespace MsgPack.Serialization.Reflection
 				String.Concat(
 					source.Name,
 					'[',
-#if !NETFX_35
+#if !NETFX_35 && !NET35
 					String.Join( ", ", source.GetGenericArguments().Select( t => t.GetName() ) ),
 #else
-					String.Join( ", ", source.GetGenericArguments().Select( t => t.GetName() ).ToArray() ),
+ String.Join( ", ", source.GetGenericArguments().Select( t => t.GetName() ).ToArray() ),
 #endif
 					']'
 				);
@@ -134,10 +134,10 @@ namespace MsgPack.Serialization.Reflection
 					ReflectionAbstractions.TypeDelimiter,
 					source.Name,
 					'[',
-#if !NETFX_35
+#if !NETFX_35 && !NET35
 					String.Join( ", ", source.GetGenericArguments().Select( t => t.GetFullName() ) ),
 #else
-					String.Join( ", ", source.GetGenericArguments().Select( t => t.GetFullName() ).ToArray() ),
+ String.Join( ", ", source.GetGenericArguments().Select( t => t.GetFullName() ).ToArray() ),
 #endif
 					']'
 				);

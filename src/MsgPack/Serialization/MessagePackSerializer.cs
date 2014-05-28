@@ -20,7 +20,7 @@
 
 using System;
 
-#if SILVERLIGHT || NETFX_35
+#if SILVERLIGHT || NETFX_35 || NET35
 using System.Collections.Generic;
 #else
 using System.Collections.Concurrent;
@@ -35,13 +35,13 @@ using System.Linq.Expressions;
 #if !XAMIOS && !UNITY_IPHONE
 using MsgPack.Serialization.AbstractSerializers;
 #if !NETFX_CORE
-#if !SILVERLIGHT && !XAMDROID
+#if !SILVERLIGHT && !XAMDROID && !UNITY
 using MsgPack.Serialization.CodeDomSerializers;
 #endif
 using MsgPack.Serialization.EmittingSerializers;
 #endif // NETFX_CORE
 #endif // !XAMIOS
-#if !WINDOWS_PHONE && !NETFX_35 && !XAMIOS
+#if !WINDOWS_PHONE && !NETFX_35 && !XAMIOS && !NET35
 using MsgPack.Serialization.ExpressionSerializers;
 #endif
 
@@ -100,22 +100,22 @@ namespace MsgPack.Serialization
 			Contract.Ensures( Contract.Result<MessagePackSerializer<T>>() != null );
 
 			//Func<SerializationContext, SerializerBuilder<T>> builderProvider;
-			ISerializerBuilder<T> builder;
+			ISerializerBuilder<T> builder = null;
 #if NETFX_CORE
 			builder = new ExpressionTreeSerializerBuilder<T>();
 #elif SILVERLIGHT
 			builder = new DynamicMethodSerializerBuilder<T>();
 #else
 			switch ( context.EmitterFlavor )
-			{
-#if !WINDOWS_PHONE && !NETFX_35
+            {
+#if !WINDOWS_PHONE && !NETFX_35 && !NET35
 				case EmitterFlavor.ExpressionBased:
 				{
 					builder = new ExpressionTreeSerializerBuilder<T>();
 					break;
 				}
 #endif // if !WINDOWS_PHONE && !NETFX_35
-				case EmitterFlavor.FieldBased:
+                case EmitterFlavor.FieldBased:
 				{
 					builder = new AssemblyBuilderSerializerBuilder<T>();
 					break;
@@ -126,8 +126,8 @@ namespace MsgPack.Serialization
 					break;
 				}
 				default:
-				{
-#if !NETFX_35
+                {
+#if !NETFX_35 && !UNITY
 #if !XAMDROID
 					if ( !SerializerDebugging.OnTheFlyCodeDomEnabled )
 					{
@@ -143,11 +143,11 @@ namespace MsgPack.Serialization
 					}
 #endif // if !XAMDROID
 #endif // if !NETFX_35
-#if !XAMDROID
-					builder = new CodeDomSerializerBuilder<T>();
-					break;
+#if !XAMDROID && !UNITY
+                    builder = new CodeDomSerializerBuilder<T>();
 #endif // if !XAMDROID
-				}
+                    break;
+                }
 			}
 #endif // NETFX_CORE else
 
@@ -156,10 +156,10 @@ namespace MsgPack.Serialization
 		}
 
 #if !XAMIOS
-#if !SILVERLIGHT && !NETFX_35
+#if !SILVERLIGHT && !NETFX_35 && !NET35
 		private static readonly ConcurrentDictionary<Type, Func<SerializationContext, IMessagePackSingleObjectSerializer>> _creatorCache = new ConcurrentDictionary<Type, Func<SerializationContext, IMessagePackSingleObjectSerializer>>();
 #else
-		private static readonly object _syncRoot = new object();
+        private static readonly object _syncRoot = new object();
 		private static readonly Dictionary<Type, Func<SerializationContext, IMessagePackSingleObjectSerializer>> _creatorCache = new Dictionary<Type, Func<SerializationContext, IMessagePackSingleObjectSerializer>>();
 #endif
 #endif
@@ -238,7 +238,7 @@ namespace MsgPack.Serialization
 							).Compile();
 					}
 				);
-#elif SILVERLIGHT || NETFX_35
+#elif SILVERLIGHT || NETFX_35 || NET35
 			Func<SerializationContext, IMessagePackSingleObjectSerializer> factory;
 
 			lock ( _syncRoot )

@@ -23,7 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
-#if !WINDOWS_PHONE && !NETFX_35
+#if !WINDOWS_PHONE && !NETFX_35 && !NET35
 using System.Numerics;
 #endif
 using System.Reflection;
@@ -74,11 +74,11 @@ namespace MsgPack.Serialization
 			dictionary.Add( typeof( System.Collections.Specialized.BitVector32 ).TypeHandle, new MsgPack.Serialization.DefaultSerializers.System_Collections_Specialized_BitVector32MessagePackSerializer( ownerContext ) );
 #endif // !SILVERLIGHT && !NETFX_CORE
 #if !WINDOWS_PHONE
-#if !NETFX_35
+#if !NETFX_35 && !NET35
 			dictionary.Add( typeof( System.Numerics.BigInteger ).TypeHandle, new MsgPack.Serialization.DefaultSerializers.System_Numerics_BigIntegerMessagePackSerializer( ownerContext ) );
 #endif // !WINDOWS_PHONE
 #endif // !NETFX_35
-			dictionary.Add( typeof( System.ArraySegment<> ).TypeHandle, typeof( System_ArraySegment_1MessagePackSerializer<> ) );
+            dictionary.Add( typeof( System.ArraySegment<> ).TypeHandle, typeof( System_ArraySegment_1MessagePackSerializer<> ) );
 			dictionary.Add( typeof( System.Collections.DictionaryEntry ).TypeHandle, new MsgPack.Serialization.DefaultSerializers.System_Collections_DictionaryEntryMessagePackSerializer( ownerContext ) );
 #if !SILVERLIGHT && !NETFX_CORE
 #if !SILVERLIGHT
@@ -94,11 +94,11 @@ namespace MsgPack.Serialization
 			dictionary.Add( typeof( System.Collections.Generic.Stack<> ).TypeHandle, typeof( System_Collections_Generic_Stack_1MessagePackSerializer<> ) );
 			dictionary.Add( typeof( System.Collections.Generic.Queue<> ).TypeHandle, typeof( System_Collections_Generic_Queue_1MessagePackSerializer<> ) );
 #if !WINDOWS_PHONE
-#if !NETFX_35
+#if !NETFX_35 && !NET35
 			dictionary.Add( typeof( System.Numerics.Complex ).TypeHandle, new MsgPack.Serialization.DefaultSerializers.System_Numerics_ComplexMessagePackSerializer( ownerContext ) );
 #endif // !WINDOWS_PHONE
 #endif // !NETFX_35
-			dictionary.Add( typeof( System.Uri ).TypeHandle, new MsgPack.Serialization.DefaultSerializers.System_UriMessagePackSerializer( ownerContext ) );
+            dictionary.Add( typeof( System.Uri ).TypeHandle, new MsgPack.Serialization.DefaultSerializers.System_UriMessagePackSerializer( ownerContext ) );
 			dictionary.Add( typeof( System.Version ).TypeHandle, new MsgPack.Serialization.DefaultSerializers.System_VersionMessagePackSerializer( ownerContext ) );
 #if !SILVERLIGHT && !NETFX_CORE
 #if !SILVERLIGHT

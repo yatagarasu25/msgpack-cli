@@ -40,14 +40,14 @@ namespace MsgPack.Serialization
 		/// </summary>
 		FieldBased,
 #endif
-#if !NETFX_35
+#if !NETFX_35 && !NET35
 		/// <summary>
 		///		Uses expression tree to (de)serialization.
 		///		It may have more overhead but is available in WinRT.
 		/// </summary>
 		ExpressionBased,
 #endif
-#if !NETFX_CORE
+#if !NETFX_CORE && !UNITY
 		/// <summary>
 		///		Uses code DOM code generation to (de)serialization.
 		///		It requires a long time but prevents runtime code generation at all.

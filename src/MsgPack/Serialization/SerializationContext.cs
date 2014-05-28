@@ -19,9 +19,9 @@
 #endregion -- License Terms --
 
 using System;
-#if !SILVERLIGHT && !NETFX_35
+#if !SILVERLIGHT && !NETFX_35 && !NET35
 using System.Collections.Concurrent;
-#endif // !SILVERLIGHT && !NETFX_35
+#endif // !SILVERLIGHT && !NETFX_35 && !NET35
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Globalization;
@@ -68,10 +68,10 @@ namespace MsgPack.Serialization
 
 		private readonly SerializerRepository _serializers;
 #if !XAMIOS
-#if SILVERLIGHT || NETFX_35
+#if SILVERLIGHT || NETFX_35 || NET35
 		private readonly Dictionary<Type, object> _typeLock;
 #else
-		private readonly ConcurrentDictionary<Type, object> _typeLock;
+        private readonly ConcurrentDictionary<Type, object> _typeLock;
 #endif
 #endif
 
@@ -307,7 +307,7 @@ namespace MsgPack.Serialization
 				};
 			this._serializers = serializers;
 #if !XAMIOS
-#if SILVERLIGHT || NETFX_35
+#if SILVERLIGHT || NETFX_35 || NET35
 			this._typeLock = new Dictionary<Type, object>();
 #else
 			this._typeLock = new ConcurrentDictionary<Type, object>();
@@ -425,7 +425,7 @@ namespace MsgPack.Serialization
 							finally
 							{
 								var newLock = new object();
-#if SILVERLIGHT || NETFX_35
+#if SILVERLIGHT || NETFX_35 || NET35
 								Monitor.Enter( newLock );
 								try
 								{
@@ -449,7 +449,7 @@ namespace MsgPack.Serialization
 								}
 								finally
 								{
-#if SILVERLIGHT || NETFX_35
+#if SILVERLIGHT || NETFX_35 || NET35
 									if ( !lockTaken )
 #else
 									if ( !lockTaken && newLockTaken )
@@ -491,7 +491,7 @@ namespace MsgPack.Serialization
 						{
 							if ( lockTaken )
 							{
-#if SILVERLIGHT || NETFX_35
+#if SILVERLIGHT || NETFX_35 || NET35
 								lock( this._typeLock )
 								{
 									this._typeLock.Remove( typeof( T ) );

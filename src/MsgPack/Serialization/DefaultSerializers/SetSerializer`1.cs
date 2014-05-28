@@ -24,7 +24,7 @@ using System.Linq;
 
 namespace MsgPack.Serialization.DefaultSerializers
 {
-#if !NETFX_35
+#if !NETFX_35 && !NET35
 	/// <summary>
 	///		Set interface serializer.
 	/// </summary>

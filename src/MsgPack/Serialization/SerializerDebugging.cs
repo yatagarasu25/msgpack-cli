@@ -19,7 +19,7 @@
 #endregion -- License Terms --
 
 using System;
-#if !NETFX_35
+#if !NETFX_35 && !NET35
 using System.Collections.Concurrent;
 #endif
 using System.Collections.Generic;

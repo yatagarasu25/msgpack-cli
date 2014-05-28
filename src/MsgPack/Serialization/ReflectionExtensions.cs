@@ -307,10 +307,10 @@ namespace MsgPack.Serialization
 			if ( index < 0 )
 			{
 #if DEBUG
-#if !NETFX_35
+#if !NETFX_35 && !NET35
 				Contract.Assert( false, interfaceType + "::" + name + "(" + String.Join<Type>( ", ", parameterTypes ) + ") is not found in " + targetType );
 #else
-				Contract.Assert( false, interfaceType + "::" + name + "(" + String.Join( ", ", parameterTypes.Select( t => t.ToString() ).ToArray() ) + ") is not found in " + targetType );
+                Contract.Assert( false, interfaceType + "::" + name + "(" + String.Join( ", ", parameterTypes.Select( t => t.ToString() ).ToArray() ) + ") is not found in " + targetType );
 #endif
 #endif
 				// ReSharper disable once HeuristicUnreachableCode
