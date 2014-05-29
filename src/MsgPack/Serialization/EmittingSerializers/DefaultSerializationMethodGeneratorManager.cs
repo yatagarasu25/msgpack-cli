@@ -114,10 +114,10 @@ namespace MsgPack.Serialization.EmittingSerializers
 #if !SILVERLIGHT
 						isDebuggable
 						? AssemblyBuilderAccess.RunAndSave
-#if !NETFX_35
+#if !NETFX_35 && !NET35
 						: ( isCollectable ? AssemblyBuilderAccess.RunAndCollect : AssemblyBuilderAccess.Run )
 #else
-						: AssemblyBuilderAccess.Run
+ : AssemblyBuilderAccess.Run
 #endif
 #else
 						AssemblyBuilderAccess.Run 
@@ -168,7 +168,7 @@ namespace MsgPack.Serialization.EmittingSerializers
 					new object[] { 8 }
 				)
 			);
-#if !SILVERLIGHT && !NETFX_35
+#if !SILVERLIGHT && !NETFX_35 && !NET35
 			dedicatedAssemblyBuilder.SetCustomAttribute(
 				new CustomAttributeBuilder(
 					// ReSharper disable once AssignNullToNotNullAttribute
@@ -179,7 +179,7 @@ namespace MsgPack.Serialization.EmittingSerializers
 				)
 			);
 #endif // !SILVERLIGHT
-		}
+        }
 #endif // !WINDOWS_PHONE
 
 #if !SILVERLIGHT

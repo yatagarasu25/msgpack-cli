@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET35</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_35;UNITY</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -30,7 +30,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;NET35</DefineConstants>
+    <DefineConstants>TRACE;NETFX_35;UNITY</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -38,7 +38,7 @@
     </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\MsgPack.snk</AssemblyOriginatorKeyFile>
@@ -46,6 +46,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">
@@ -618,9 +619,6 @@
     <Compile Include="..\MsgPack\Serialization\SerializerDebugging.cs">
       <Link>Serialization\SerializerDebugging.cs</Link>
     </Compile>
-    <Compile Include="..\MsgPack\Serialization\SerializerGenerator.cs">
-      <Link>Serialization\SerializerGenerator.cs</Link>
-    </Compile>
     <Compile Include="..\MsgPack\Serialization\SerializerRepository.cs">
       <Link>Serialization\SerializerRepository.cs</Link>
     </Compile>
@@ -703,30 +701,12 @@
       <Link>Validation.cs</Link>
     </Compile>
     <Compile Include="Contract.cs" />
-    <Compile Include="Delegates.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Delegates.tt</DependentUpon>
-    </Compile>
     <Compile Include="NetFxCompatibilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tuple`n.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Tuple`n.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\MsgPack.snk">
       <Link>MsgPack.snk</Link>
-    </None>
-    <None Include="Delegates.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Delegates.cs</LastGenOutput>
-    </None>
-    <None Include="Tuple`n.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Tuple`n.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -736,6 +716,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SystemEx\SystemEx.csproj">
+      <Project>{0271e27f-e614-4b0f-af16-05d2d2781b7f}</Project>
+      <Name>SystemEx</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

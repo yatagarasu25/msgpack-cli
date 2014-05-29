@@ -11,6 +11,7 @@ _UpgradeReport_*/
 UpgradeLog*.*
 bin/
 Bin/
+Backup/
 Help*/
 lib/
 local/
@@ -23,6 +24,7 @@ TestResult/
 TestResults/
 *.userprefs
 .DS_Store
+.project
 src/MsgPack.Unity/Assets/MsgPack/*
 src/MsgPack.Unity/Library/
 MsgPack.unitypackage

@@ -20,6 +20,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 
 namespace MsgPack.Serialization
 {
@@ -28,6 +29,8 @@ namespace MsgPack.Serialization
 	/// </summary>
 	public interface IMessagePackSerializer
 	{
+		object UnpackObject( Stream stream );
+
 		/// <summary>
 		///		Serialize specified object with specified <see cref="Packer"/>.
 		/// </summary>
