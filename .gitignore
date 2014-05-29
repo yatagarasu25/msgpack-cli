@@ -21,3 +21,5 @@ Storage.dat
 test-results/
 TestResult/
 TestResults/
+Backup/
+.project
