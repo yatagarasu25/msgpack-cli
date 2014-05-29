@@ -40,7 +40,7 @@ namespace MsgPack
 #endif // if !SILVERLIGHT && !NETFX_CORE
 	[DebuggerDisplay( "{DebuggerDisplayString}" )]
 	[DebuggerTypeProxy( typeof( MessagePackStringDebuggerProxy ) )]
-	internal sealed class MessagePackString
+	public sealed class MessagePackString
 	{
 		// TODO: CLOB support?
 		private byte[] _encoded;
@@ -291,7 +291,7 @@ namespace MsgPack
 		private static int _isFastEqualsDisabled;
 #endif // if SILVERLIGHT
 
-		internal static bool IsFastEqualsDisabled
+		public static bool IsFastEqualsDisabled
 		{
 			get { return _isFastEqualsDisabled != 0; }
 		}
@@ -326,7 +326,7 @@ namespace MsgPack
 			Blob
 		}
 
-		internal sealed class MessagePackStringDebuggerProxy
+		public sealed class MessagePackStringDebuggerProxy
 		{
 			private readonly MessagePackString _target;
 			private string _asByteArray;

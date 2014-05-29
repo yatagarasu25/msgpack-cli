@@ -34,7 +34,7 @@ namespace MsgPack
 	///		Common validtion utility.
 	/// </summary>
 	// [ArgumentValidator]
-	internal static class Validation
+	public static class Validation
 	{
 		public static void ValidateBuffer<T>( T[] byteArray, int offset, long length, string nameOfByteArray, string nameOfLength, bool validateBufferSize )
 		{

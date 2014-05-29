@@ -31,7 +31,7 @@ namespace MsgPack
 	/// </summary>
 
 	[StructLayout( LayoutKind.Explicit )]
-	internal struct Float32Bits
+	public struct Float32Bits
 	{
 		/// <summary>
 		///		Value as <see cref="Single"/>.

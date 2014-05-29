@@ -22,7 +22,7 @@ using System;
 
 namespace MsgPack
 {
-	internal static class MessagePackCode
+	public static class MessagePackCode
 	{
 		public const int NilValue = 0xc0;
 		public const int TrueValue = 0xc3;

@@ -29,7 +29,7 @@ namespace MsgPack.Serialization.AbstractSerializers
 	[ContractClassFor( typeof( SerializerBuilder<,,> ) )]
 	internal class SerializerBuilderContract<TContext, TConstruct, TObject> : SerializerBuilder<TContext, TConstruct, TObject>
 		where TContext : SerializerGenerationContext<TConstruct>
-		where TConstruct : class, ICodeConstruct
+		where TConstruct : ICodeConstruct
 	{
 		public SerializerBuilderContract() { }
 

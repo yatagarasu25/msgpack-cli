@@ -33,7 +33,7 @@ namespace MsgPack
 	{
 		private static readonly MessagePackObjectEqualityComparer _instance = new MessagePackObjectEqualityComparer();
 
-		internal static MessagePackObjectEqualityComparer Instance
+		public static MessagePackObjectEqualityComparer Instance
 		{
 			get { return _instance; }
 		}

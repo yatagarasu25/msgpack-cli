@@ -26,7 +26,7 @@ namespace MsgPack
 	/// <summary>
 	///		Defines binary related utilities.
 	/// </summary>
-	internal static class Binary
+	public static class Binary
 	{
 		/// <summary>
 		///		Singleton empty <see cref="Byte"/>[].

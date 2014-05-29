@@ -28,7 +28,7 @@ namespace MsgPack
 	/// <summary>
 	///		Define bit operations which enforce big endian.
 	/// </summary>
-	internal static class BigEndianBinary
+	public static class BigEndianBinary
 	{
 		public static sbyte ToSByte( byte[] buffer, int offset )
 		{

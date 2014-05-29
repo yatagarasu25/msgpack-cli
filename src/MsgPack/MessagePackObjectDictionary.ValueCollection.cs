@@ -70,7 +70,7 @@ namespace MsgPack
 				get { return this; }
 			}
 
-			internal ValueCollection( MessagePackObjectDictionary dictionary )
+			public ValueCollection( MessagePackObjectDictionary dictionary )
 			{
 #if !UNITY_ANDROID && !UNITY_IPHONE
 				Contract.Assert( dictionary != null );

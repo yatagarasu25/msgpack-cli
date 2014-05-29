@@ -30,7 +30,7 @@ namespace MsgPack
 	///		Provides bit access for <see cref="Double"/>.
 	/// </summary>
 	[StructLayout( LayoutKind.Explicit )]
-	internal struct Float64Bits
+	public struct Float64Bits
 	{
 		/// <summary>
 		///		Value as <see cref="Double"/>.

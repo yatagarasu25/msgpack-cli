@@ -41,22 +41,22 @@ namespace MsgPack
 	/// <seealso cref="Unpacker"/>
 	public static partial class Unpacking
 	{
-		internal static readonly MessagePackObject[] PositiveIntegers =
+		public static readonly MessagePackObject[] PositiveIntegers =
 			Enumerable.Range( 0, 0x80 ).Select( i => new MessagePackObject( unchecked( ( byte )i ) ) ).ToArray();
-		internal static readonly MessagePackObject[] NegativeIntegers =
+		public static readonly MessagePackObject[] NegativeIntegers =
 			Enumerable.Range( 0, 0x20 ).Select( i => new MessagePackObject( unchecked( ( sbyte )( -32 + i ) ) ) ).ToArray();
 
-		internal static readonly MessagePackObject TrueValue = true;
-		internal static readonly MessagePackObject FalseValue = false;
+		public static readonly MessagePackObject TrueValue = true;
+		public static readonly MessagePackObject FalseValue = false;
 
-		internal static readonly MessagePackObject?[] NullablePositiveIntegers =
+		public static readonly MessagePackObject?[] NullablePositiveIntegers =
 			Enumerable.Range( 0, 0x80 ).Select( i => new MessagePackObject?( unchecked( ( byte )i ) ) ).ToArray();
-		internal static readonly MessagePackObject?[] NullableNegativeIntegers =
+		public static readonly MessagePackObject?[] NullableNegativeIntegers =
 			Enumerable.Range( 0, 0x20 ).Select( i => new MessagePackObject?( unchecked( ( sbyte )( -32 + i ) ) ) ).ToArray();
 
-		internal static readonly MessagePackObject? NullableTrueValue = true;
-		internal static readonly MessagePackObject? NullableFalseValue = false;
-		internal static readonly MessagePackObject? NullableNilValue = MessagePackObject.Nil;
+		public static readonly MessagePackObject? NullableTrueValue = true;
+		public static readonly MessagePackObject? NullableFalseValue = false;
+		public static readonly MessagePackObject? NullableNilValue = MessagePackObject.Nil;
 
 		private static void ValidateByteArray( byte[] source, int offset )
 		{

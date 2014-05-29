@@ -66,7 +66,7 @@ namespace MsgPack
 					get { return this._underlying.GetCurrentStrict().Value; }
 				}
 
-				internal Enumerator( MessagePackObjectDictionary dictionary )
+				public Enumerator( MessagePackObjectDictionary dictionary )
 				{
 #if !UNITY_ANDROID && !UNITY_IPHONE
 					Contract.Assert( dictionary != null );

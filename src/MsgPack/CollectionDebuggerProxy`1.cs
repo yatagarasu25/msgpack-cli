@@ -30,7 +30,7 @@ namespace MsgPack
 	///		Debugger type proxy for <see cref="ICollection{T}"/>.
 	/// </summary>
 	/// <typeparam name="T">The element type of the collection.</typeparam>
-	internal sealed class CollectionDebuggerProxy<T>
+	public sealed class CollectionDebuggerProxy<T>
 	{
 		private readonly ICollection<T> _collection;
 

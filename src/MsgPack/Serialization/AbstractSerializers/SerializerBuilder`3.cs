@@ -40,7 +40,7 @@ namespace MsgPack.Serialization.AbstractSerializers
 #endif
 		ISerializerBuilder<TObject>
 		where TContext : SerializerGenerationContext<TConstruct>
-		where TConstruct : class, ICodeConstruct
+		where TConstruct : ICodeConstruct
 	{
 		/// <summary>
 		///		<see cref="PropertyInfo"/> of <see cref="MessagePackSerializer{TObject}.OwnerContext"/>.

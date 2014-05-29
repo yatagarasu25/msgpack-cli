@@ -198,7 +198,7 @@ namespace MsgPack
 		}
 
 		/// <summary>
-		///		Clean up internal resources.
+		///		Clean up public resources.
 		/// </summary>
 		public void Dispose()
 		{

@@ -26,7 +26,7 @@ namespace MsgPack
 	/// <summary>
 	///		Basic <see cref="Packer"/> implementation using managed <see cref="Stream"/>.
 	/// </summary>
-	internal class StreamPacker : Packer
+	public class StreamPacker : Packer
 	{
 		private readonly Stream _stream;
 		private readonly bool _ownsStream;

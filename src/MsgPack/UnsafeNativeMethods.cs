@@ -31,7 +31,7 @@ namespace MsgPack
 #endif
 #if !WINDOWS_PHONE
 	[SecurityCritical]
-	internal static class UnsafeNativeMethods
+	public static class UnsafeNativeMethods
 	{
 		private static int _libCAvailability = 0;
 		private const int _libCAvailability_Unknown = 0;

@@ -43,7 +43,7 @@ namespace MsgPack
 			get { return this._byteLength; }
 		}
 
-		internal UnpackingStreamReader( Stream stream, Encoding encoding, long byteLength )
+		public UnpackingStreamReader( Stream stream, Encoding encoding, long byteLength )
 			: base( stream, encoding, true )
 		{
 			this._byteLength = byteLength;

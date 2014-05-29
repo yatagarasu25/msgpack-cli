@@ -27,7 +27,7 @@ using System.Linq;
 
 namespace MsgPack
 {
-	internal static class CollectionOperation
+	public static class CollectionOperation
 	{
 		public static void CopyTo<T>( IEnumerable<T> source, int sourceCount, int index, T[] array, int arrayIndex, int count )
 		{

@@ -30,7 +30,7 @@ namespace MsgPack
 	/// <summary>
 	///		Defines subtree unpacking unpacker.
 	/// </summary>
-	internal sealed partial class SubtreeUnpacker : Unpacker
+	public sealed partial class SubtreeUnpacker : Unpacker
 	{
 		private readonly ItemsUnpacker _root;
 		private readonly SubtreeUnpacker _parent;
@@ -72,7 +72,7 @@ namespace MsgPack
 		}
 
 #if DEBUG
-		internal override long? UnderlyingStreamPosition
+		public override long? UnderlyingStreamPosition
 		{
 			get { return this._root.UnderlyingStreamPosition; }
 		}

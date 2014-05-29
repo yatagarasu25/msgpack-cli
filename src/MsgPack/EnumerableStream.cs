@@ -28,7 +28,7 @@ using System.Linq;
 
 namespace MsgPack
 {
-	internal sealed class EnumerableStream : Stream
+	public sealed class EnumerableStream : Stream
 	{
 		private readonly IEnumerator<byte> _underlyingEnumerator;
 		private readonly IList<byte> _underlyingList;

@@ -55,7 +55,7 @@ namespace MsgPack
 		/// <value>
 		///		A binary value portion of this object. This value will not be null.
 		/// </value>
-		internal byte[] Body
+		public byte[] Body
 		{
 			get { return this._body ?? Binary.Empty; }
 		}
@@ -155,7 +155,7 @@ namespace MsgPack
 			return buffer.ToString();
 		}
 
-		internal void ToString( StringBuilder buffer, bool isJson )
+		public void ToString( StringBuilder buffer, bool isJson )
 		{
 			if ( isJson )
 			{

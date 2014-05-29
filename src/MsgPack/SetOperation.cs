@@ -30,7 +30,7 @@ namespace MsgPack
 	/// <summary>
 	///		Implements basic (maybe naive) implementation for common Set&lt;T&gt; operation.
 	/// </summary>
-	internal static class SetOperation
+	public static class SetOperation
 	{
 		[Pure]
 #if NETFX_35 || NET35

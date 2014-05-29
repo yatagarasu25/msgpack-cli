@@ -184,7 +184,7 @@ namespace MsgPack
 		///		Initializes a new instance wraps <see cref="MessagePackString"/>.
 		/// </summary>
 		/// <param name="messagePackString"><see cref="MessagePackString"/> which represents byte array or UTF-8 encoded string.</param>
-		internal MessagePackObject( MessagePackString messagePackString )
+		public MessagePackObject( MessagePackString messagePackString )
 		{
 			// trick: Avoid long boilerplate initialization. See "CLR via C#".
 			this = new MessagePackObject();
@@ -1702,7 +1702,7 @@ namespace MsgPack
 				get { return this._type; }
 			}
 
-			internal ValueTypeCode( Type type, MessagePackValueTypeCode typeCode )
+			public ValueTypeCode( Type type, MessagePackValueTypeCode typeCode )
 			{
 				this._type = type;
 				this._typeCode = typeCode;

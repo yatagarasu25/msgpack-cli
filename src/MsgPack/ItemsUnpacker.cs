@@ -23,14 +23,14 @@ using System.IO;
 
 namespace MsgPack
 {
-	internal sealed partial class ItemsUnpacker : Unpacker
+	public sealed partial class ItemsUnpacker : Unpacker
 	{
 		private readonly bool _ownsStream;
 		private readonly Stream _stream;
 		private readonly byte[] _scalarBuffer = new byte[ 8 ];
-		internal long InternalItemsCount;
-		internal CollectionType InternalCollectionType;
-		internal MessagePackObject InternalData;
+		public long InternalItemsCount;
+		public CollectionType InternalCollectionType;
+		public MessagePackObject InternalData;
 
 		[Obsolete( "Consumer should not use this property. Query LastReadData instead." )]
 		public override MessagePackObject? Data
@@ -71,7 +71,7 @@ namespace MsgPack
 		}
 
 #if DEBUG
-		internal override long? UnderlyingStreamPosition
+		public override long? UnderlyingStreamPosition
 		{
 			get { return this._stream.Position; }
 		}
@@ -139,17 +139,17 @@ namespace MsgPack
 		/// <remarks>
 		///		This method only be called from <see cref="SubtreeUnpacker"/>.
 		/// </remarks>
-		internal bool ReadSubtreeItem()
+		public bool ReadSubtreeItem()
 		{
 			return this.ReadCore();
 		}
 
-		internal long? SkipSubtreeItem()
+		public long? SkipSubtreeItem()
 		{
 			return this.SkipCore();
 		}
 
-		internal enum CollectionType
+		public enum CollectionType
 		{
 			// Value must be items count of collection element.
 			None = 0,

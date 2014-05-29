@@ -34,12 +34,12 @@ namespace MsgPack
 		private static readonly Encoding _utf8NonBomStrict = new UTF8Encoding( false, true );
 		private static readonly Encoding _utf8NonBom = new UTF8Encoding( false, false );
 
-		internal static Encoding Utf8NonBom
+		public static Encoding Utf8NonBom
 		{
 			get { return _utf8NonBom; }
 		}
 
-		internal static Encoding Utf8NonBomStrict
+		public static Encoding Utf8NonBomStrict
 		{
 			get { return _utf8NonBomStrict; }
 		}

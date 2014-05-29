@@ -80,9 +80,9 @@ namespace MsgPack
 			}
 
 #if !WINDOWS_PHONE && !UNITY_ANDROID && !UNITY_IPHONE
-			internal KeySet( MessagePackObjectDictionary dictionary )
+			public KeySet( MessagePackObjectDictionary dictionary )
 #else
-			internal KeyCollection( MessagePackObjectDictionary dictionary )
+			public KeyCollection( MessagePackObjectDictionary dictionary )
 #endif
 			{
 #if !UNITY_ANDROID && !UNITY_IPHONE

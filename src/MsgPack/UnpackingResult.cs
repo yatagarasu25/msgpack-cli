@@ -58,7 +58,7 @@ namespace MsgPack
 			get { return this._value; }
 		}
 
-		internal UnpackingResult( T value, int readCount )
+		public UnpackingResult( T value, int readCount )
 		{
 			this._value = value;
 			this._readCount = readCount;

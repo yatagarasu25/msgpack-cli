@@ -22,7 +22,7 @@ using System;
 
 namespace MsgPack
 {
-	internal enum UnpackingMode
+	public enum UnpackingMode
 	{
 		PerEntry,
 		SkipSubtree

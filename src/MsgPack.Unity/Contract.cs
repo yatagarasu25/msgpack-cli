@@ -27,7 +27,7 @@ namespace System.Diagnostics.Contracts
 	/// <summary>
 	///		Compatibility Mock.
 	/// </summary>
-	internal static class Contract
+	public static class Contract
 	{
 		private static readonly object _contractFailedLock = new object();
 		private static EventHandler<ContractFailedEventArgs> _contractFailed;
@@ -133,14 +133,14 @@ namespace System.Diagnostics.Contracts
 		| AttributeTargets.Parameter,
 		Inherited = true
 	)]
-	internal sealed class PureAttribute : Attribute { }
+	public sealed class PureAttribute : Attribute { }
 
 	/// <summary>
 	///		Compatibility Mock.
 	/// </summary>
 	[Conditional( "NEVER_COMPILED" )]
 	[AttributeUsage( AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Delegate )]
-	internal sealed class ContractClassAttribute : Attribute
+	public sealed class ContractClassAttribute : Attribute
 	{
 		public ContractClassAttribute( Type typeContainingContracts ) { }
 	}
@@ -150,14 +150,14 @@ namespace System.Diagnostics.Contracts
 	/// </summary>
 	[Conditional( "NEVER_COMPILED" )]
 	[AttributeUsage( AttributeTargets.Class )]
-	internal sealed class ContractClassForAttribute : Attribute
+	public sealed class ContractClassForAttribute : Attribute
 	{
 		public ContractClassForAttribute( Type typeContractsAreFor ) { }
 	}
 
-	internal sealed class ContractFailedEventArgs : EventArgs
+	public sealed class ContractFailedEventArgs : EventArgs
 	{
-		internal bool IsUnwined { get; private set; }
+		public bool IsUnwined { get; private set; }
 
 		public void SetUnwind()
 		{

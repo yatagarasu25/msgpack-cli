@@ -76,7 +76,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeBoolean( out Boolean result )
+		public bool ReadSubtreeBoolean( out Boolean result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -163,7 +163,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeNullableBoolean( out Boolean? result )
+		public bool ReadSubtreeNullableBoolean( out Boolean? result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -276,7 +276,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeByte( out Byte result )
+		public bool ReadSubtreeByte( out Byte result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -415,7 +415,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeNullableByte( out Byte? result )
+		public bool ReadSubtreeNullableByte( out Byte? result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -561,7 +561,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeSByte( out SByte result )
+		public bool ReadSubtreeSByte( out SByte result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -714,7 +714,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeNullableSByte( out SByte? result )
+		public bool ReadSubtreeNullableSByte( out SByte? result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -897,7 +897,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeInt16( out Int16 result )
+		public bool ReadSubtreeInt16( out Int16 result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -1110,7 +1110,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeNullableInt16( out Int16? result )
+		public bool ReadSubtreeNullableInt16( out Int16? result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -1316,7 +1316,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeUInt16( out UInt16 result )
+		public bool ReadSubtreeUInt16( out UInt16 result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -1515,7 +1515,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeNullableUInt16( out UInt16? result )
+		public bool ReadSubtreeNullableUInt16( out UInt16? result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -1766,7 +1766,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeInt32( out Int32 result )
+		public bool ReadSubtreeInt32( out Int32 result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -2069,7 +2069,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeNullableInt32( out Int32? result )
+		public bool ReadSubtreeNullableInt32( out Int32? result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -2365,7 +2365,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeUInt32( out UInt32 result )
+		public bool ReadSubtreeUInt32( out UInt32 result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -2654,7 +2654,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeNullableUInt32( out UInt32? result )
+		public bool ReadSubtreeNullableUInt32( out UInt32? result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -2995,7 +2995,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeInt64( out Int64 result )
+		public bool ReadSubtreeInt64( out Int64 result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -3388,7 +3388,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeNullableInt64( out Int64? result )
+		public bool ReadSubtreeNullableInt64( out Int64? result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -3774,7 +3774,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeUInt64( out UInt64 result )
+		public bool ReadSubtreeUInt64( out UInt64 result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -4153,7 +4153,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeNullableUInt64( out UInt64? result )
+		public bool ReadSubtreeNullableUInt64( out UInt64? result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -4539,7 +4539,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeSingle( out Single result )
+		public bool ReadSubtreeSingle( out Single result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -4932,7 +4932,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeNullableSingle( out Single? result )
+		public bool ReadSubtreeNullableSingle( out Single? result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -5325,7 +5325,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeDouble( out Double result )
+		public bool ReadSubtreeDouble( out Double result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -5718,7 +5718,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeNullableDouble( out Double? result )
+		public bool ReadSubtreeNullableDouble( out Double? result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -6024,7 +6024,7 @@ namespace MsgPack
 			return true;
 		}
 		
-		internal bool ReadSubtreeBinary( out Byte[] result )
+		public bool ReadSubtreeBinary( out Byte[] result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -6273,7 +6273,7 @@ namespace MsgPack
 			return true;
 		}
 		
-		internal bool ReadSubtreeString( out String result )
+		public bool ReadSubtreeString( out String result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -7164,7 +7164,7 @@ namespace MsgPack
 			}
 		}
 		
-		internal bool ReadSubtreeObject( out MessagePackObject result )
+		public bool ReadSubtreeObject( out MessagePackObject result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -7983,7 +7983,7 @@ namespace MsgPack
 			#endregion UnpackArrayLength
 		}
 		
-		internal bool ReadSubtreeArrayLength( out Int64 result )
+		public bool ReadSubtreeArrayLength( out Int64 result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -8124,7 +8124,7 @@ namespace MsgPack
 			#endregion UnpackMapLength
 		}
 		
-		internal bool ReadSubtreeMapLength( out Int64 result )
+		public bool ReadSubtreeMapLength( out Int64 result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168
@@ -8475,7 +8475,7 @@ namespace MsgPack
 			#endregion UnpackExt
 		}
 		
-		internal bool ReadSubtreeMessagePackExtendedTypeObject( out MessagePackExtendedTypeObject result )
+		public bool ReadSubtreeMessagePackExtendedTypeObject( out MessagePackExtendedTypeObject result )
 		{
 			var source = this._stream;
 		#pragma warning disable 168

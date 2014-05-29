@@ -28,7 +28,7 @@ using System.Reflection;
 
 namespace MsgPack
 {
-	internal static class ReflectionAbstractions
+	public static class ReflectionAbstractions
 	{
 		public static readonly char TypeDelimiter = '.';
 		public static readonly Type[] EmptyTypes = new Type[ 0 ];

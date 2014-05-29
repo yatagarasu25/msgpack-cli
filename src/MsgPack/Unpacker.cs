@@ -180,7 +180,7 @@ namespace MsgPack
 		}
 
 #if DEBUG
-		internal virtual long? UnderlyingStreamPosition
+		public virtual long? UnderlyingStreamPosition
 		{
 			get { return null; }
 		}
@@ -331,7 +331,7 @@ namespace MsgPack
 			return result;
 		}
 
-		internal void EnsureNotInSubtreeMode()
+		public void EnsureNotInSubtreeMode()
 		{
 			this.VerifyMode( UnpackerMode.Streaming );
 			if ( this._isSubtreeReading )
@@ -501,7 +501,7 @@ namespace MsgPack
 			}
 		}
 
-		internal bool UnpackSubtreeDataCore( out MessagePackObject result )
+		public bool UnpackSubtreeDataCore( out MessagePackObject result )
 		{
 			// ReSharper disable RedundantIfElseBlock
 			if ( this.IsArrayHeader )

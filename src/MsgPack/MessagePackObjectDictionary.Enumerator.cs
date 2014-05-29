@@ -92,7 +92,7 @@ namespace MsgPack
 				get { return this.GetCurrentStrict().Value; }
 			}
 
-			internal KeyValuePair<MessagePackObject, MessagePackObject> GetCurrentStrict()
+			public KeyValuePair<MessagePackObject, MessagePackObject> GetCurrentStrict()
 			{
 				this.VerifyVersion();
 
@@ -104,7 +104,7 @@ namespace MsgPack
 				return this._current;
 			}
 
-			internal Enumerator( MessagePackObjectDictionary dictionary )
+			public Enumerator( MessagePackObjectDictionary dictionary )
 				: this()
 			{
 #if !UNITY_ANDROID && !UNITY_IPHONE
@@ -116,7 +116,7 @@ namespace MsgPack
 				this.ResetCore();
 			}
 
-			internal void VerifyVersion()
+			public void VerifyVersion()
 			{
 				if ( this._underlying != null && this._underlying._version != this._initialVersion )
 				{
@@ -197,7 +197,7 @@ namespace MsgPack
 				this.ResetCore();
 			}
 
-			internal void ResetCore()
+			public void ResetCore()
 			{
 				this._initialVersion = this._underlying._version;
 				this._current = default( KeyValuePair<MessagePackObject, MessagePackObject> );
@@ -277,7 +277,7 @@ namespace MsgPack
 				get { return this.Entry.Value; }
 			}
 
-			internal DictionaryEnumerator( MessagePackObjectDictionary dictionary )
+			public DictionaryEnumerator( MessagePackObjectDictionary dictionary )
 				: this()
 			{
 				#if !UNITY_ANDROID && !UNITY_IPHONE

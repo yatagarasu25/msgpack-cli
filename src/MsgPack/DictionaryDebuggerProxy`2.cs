@@ -31,7 +31,7 @@ namespace MsgPack
 	/// </summary>
 	/// <typeparam name="TKey">The key type of the dictionary.</typeparam>
 	/// <typeparam name="TValue">The value type of the dictionary.</typeparam>
-	internal sealed class DictionaryDebuggerProxy<TKey,TValue>
+	public sealed class DictionaryDebuggerProxy<TKey,TValue>
 	{
 		private readonly IDictionary<TKey,TValue> _dictionary;
 
