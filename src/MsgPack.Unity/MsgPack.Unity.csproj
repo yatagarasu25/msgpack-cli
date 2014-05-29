@@ -686,21 +686,12 @@
       <Link>Validation.cs</Link>
     </Compile>
     <Compile Include="Contract.cs" />
-    <Compile Include="Delegates.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Delegates.tt</DependentUpon>
-    </Compile>
     <Compile Include="NetFxCompatibilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\MsgPack.snk">
       <Link>MsgPack.snk</Link>
-    </None>
-    <None Include="Delegates.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Delegates.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
