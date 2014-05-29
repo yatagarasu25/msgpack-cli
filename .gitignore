@@ -24,3 +24,4 @@ TestResults/
 *.userprefs
 .DS_Store
 .project
+Backup/
