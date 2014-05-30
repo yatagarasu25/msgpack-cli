@@ -47,7 +47,7 @@ namespace MsgPack.Serialization
 		/// </summary>
 		ExpressionBased,
 #endif
-#if !NETFX_CORE && !UNITY
+#if !NETFX_CORE
 		/// <summary>
 		///		Uses code DOM code generation to (de)serialization.
 		///		It requires a long time but prevents runtime code generation at all.

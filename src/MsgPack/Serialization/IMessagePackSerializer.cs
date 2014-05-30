@@ -29,8 +29,6 @@ namespace MsgPack.Serialization
 	/// </summary>
 	public interface IMessagePackSerializer
 	{
-		object UnpackObject( Stream stream );
-
 		/// <summary>
 		///		Serialize specified object with specified <see cref="Packer"/>.
 		/// </summary>
