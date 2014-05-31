@@ -28,3 +28,5 @@ TestResults/
 src/MsgPack.Unity/Assets/MsgPack/*
 src/MsgPack.Unity/Library/
 MsgPack.unitypackage
+src/MsgPack.Unity/Assets/
+src/MsgPack.Unity/ProjectSettings/
