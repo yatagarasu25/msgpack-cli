@@ -37,7 +37,7 @@ using System.Linq.Expressions;
 #if !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
 using MsgPack.Serialization.AbstractSerializers;
 #if !NETFX_CORE
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !UNITY
 using MsgPack.Serialization.CodeDomSerializers;
 #endif // !SILVERLIGHT
 using MsgPack.Serialization.EmittingSerializers;
@@ -104,7 +104,7 @@ namespace MsgPack.Serialization
 			Contract.Ensures( Contract.Result<MessagePackSerializer<T>>() != null );
 
 			//Func<SerializationContext, SerializerBuilder<T>> builderProvider;
-			ISerializerBuilder<T> builder;
+			ISerializerBuilder<T> builder = null;
 #if NETFX_CORE
 			builder = new ExpressionTreeSerializerBuilder<T>();
 #elif SILVERLIGHT
@@ -143,7 +143,9 @@ namespace MsgPack.Serialization
 						);
 					}
 #endif // if !NETFX_35
+#if !UNITY
 					builder = new CodeDomSerializerBuilder<T>();
+#endif
 					break;
 				}
 			}
