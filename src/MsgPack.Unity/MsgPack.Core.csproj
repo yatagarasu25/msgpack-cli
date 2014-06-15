@@ -497,6 +497,7 @@
       <Link>Validation.cs</Link>
     </Compile>
     <Compile Include="Contract.cs" />
+    <Compile Include="MsgPackEx.cs" />
     <Compile Include="NetFxCompatibilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
