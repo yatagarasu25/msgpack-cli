@@ -164,6 +164,7 @@
     <Compile Include="Serialization\AbstractSerializers\ISerializerBuilder.cs" />
     <Compile Include="Serialization\AbstractSerializers\ISerializerCodeGenerationContext.cs" />
     <Compile Include="Serialization\AbstractSerializers\ISerializerCodeGenerator.cs" />
+    <Compile Include="Serialization\AbstractSerializers\SerializationTarget.cs" />
     <Compile Include="Serialization\AbstractSerializers\SerializerBuilderConstants.cs" />
     <Compile Include="Serialization\AbstractSerializers\SerializerBuilder`3.Enum.cs">
       <SubType>Code</SubType>
@@ -224,6 +225,8 @@
     <Compile Include="Serialization\MessagePackSerializerExtensions.cs" />
     <Compile Include="Serialization\MessagePackSerializerProvider.cs" />
     <Compile Include="Serialization\Metadata\_EnumMessagePackSerializerHelpers.cs" />
+    <Compile Include="Serialization\Metadata\_FieldInfo.cs" />
+    <Compile Include="Serialization\Metadata\_MethodBase.cs" />
     <Compile Include="Serialization\SerializerAssemblyGenerationConfiguration.cs" />
     <Compile Include="Serialization\SerializerCodeGenerationConfiguration.cs" />
     <Compile Include="Serialization\EmittingSerializers\AndConditionILConstruct.cs" />
