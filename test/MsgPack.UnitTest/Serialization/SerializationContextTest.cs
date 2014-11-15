@@ -58,7 +58,7 @@ namespace MsgPack.Serialization
 			Assert.Throws<ArgumentNullException>( () => target.GetSerializer( null ) );
 		}
 
-#if !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
+#if !XAMIOS && !XAMDROID && !UNITY
 		[Test]
 		public void TestGetSerializer_Concurrent()
 		{
@@ -67,19 +67,19 @@ namespace MsgPack.Serialization
 				target.GetSerializer<ComplexType>
 			).Test();
 		}
-#endif // !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !XAMIOS && !XAMDROID && !UNITY
 
 		[Test]
 		public void TestGetSerializer_Type()
 		{
 			var target = new SerializationContext();
 			Assert.That( target.GetSerializer( typeof( int ) ), Is.Not.Null );
-#if !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
+#if !XAMIOS && !XAMDROID && !UNITY
 			Assert.That( target.GetSerializer( typeof( ComplexType ) ), Is.Not.Null );
-#endif // !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !XAMIOS && !XAMDROID && !UNITY
 		}
 
-#if !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
+#if !XAMIOS && !XAMDROID && !UNITY
 		[Test]
 		public void TestGetSerializer_TypeConcurrent()
 		{
@@ -88,7 +88,7 @@ namespace MsgPack.Serialization
 				() => ( MessagePackSerializer<ComplexType> )target.GetSerializer( typeof( ComplexType ) )
 			).Test();
 		}
-#endif // !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !XAMIOS && !XAMDROID && !UNITY
 
 		[Test]
 		public void TestDefaultCollectionTypes_Default_Check()
@@ -153,14 +153,14 @@ namespace MsgPack.Serialization
 			Assert.Throws<ArgumentException>( () => context.DefaultCollectionTypes.Register( typeof( IDictionary<,> ), typeof( StringKeyDictionary<> ) ) );
 		}
 
-#if !NETFX_CORE
+#if !NETFX_CORE && !SILVERLIGHT
 		[Test]
 		public void TestDefaultCollectionTypes_Register_Incompatible_Fail()
 		{
 			var context = new SerializationContext();
 			Assert.Throws<ArgumentException>( () => context.DefaultCollectionTypes.Register( typeof( IList<> ), typeof( ArrayList ) ) );
 		}
-#endif
+#endif // !NETFX_CORE && !SILVERLIGHT
 
 		[Test]
 		public void TestDefaultCollectionTypes_Register_NonGenericGenericMpoOk()
@@ -275,7 +275,7 @@ namespace MsgPack.Serialization
 			}
 		}
 
-#if !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
+#if !XAMIOS && !XAMDROID && !UNITY
 		private sealed class ConcurrentHelper<T> : IDisposable
 			where T : class
 		{
@@ -340,7 +340,7 @@ namespace MsgPack.Serialization
 				}
 			}
 		}
-#endif // !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !XAMIOS && !XAMDROID && !UNITY
 
 		public abstract class NewAbstractCollection<T> : Collection<T>
 		{

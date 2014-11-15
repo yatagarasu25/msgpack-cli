@@ -18,6 +18,10 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
@@ -62,6 +66,7 @@ namespace MsgPack.Serialization
 		/// </summary>
 		/// <param name="packer"><see cref="Packer"/> which packs values in <paramref name="objectTree"/>. This value will not be <c>null</c>.</param>
 		/// <param name="objectTree">Object to be serialized.</param>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, TEnum objectTree )
 		{
 			if ( this._serializationMethod == EnumSerializationMethod.ByUnderlyingValue )
@@ -95,6 +100,7 @@ namespace MsgPack.Serialization
 		/// <exception cref="InvalidMessagePackStreamException">
 		///		Failed to deserialize object due to invalid unpacker state, stream content, or so.
 		/// </exception>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override TEnum UnpackFromCore( Unpacker unpacker )
 		{
 			if ( unpacker.LastReadData.IsRaw )
@@ -102,7 +108,7 @@ namespace MsgPack.Serialization
 				var asString = unpacker.LastReadData.AsString();
 
 				TEnum result;
-#if NETFX_35 || UNITY_ANDROID || UNITY_IPHONE
+#if NETFX_35 || UNITY
 				try
 				{
 					result = ( TEnum ) Enum.Parse( typeof( TEnum ), asString, false );
@@ -131,16 +137,14 @@ namespace MsgPack.Serialization
 						)
 					);
 				}
-#endif // NETFX_35 || UNITY_ANDROID || UNITY_IPHONE
+#endif // NETFX_35 || UNITY
 
 				return result;
 			}
-			// ReSharper disable once RedundantIfElseBlock
 			else if ( unpacker.LastReadData.IsTypeOf( this._underlyingType ).GetValueOrDefault() )
 			{
 				return this.UnpackFromUnderlyingValue( unpacker.LastReadData );
 			}
-			// ReSharper disable once RedundantIfElseBlock
 			else
 			{
 				throw new SerializationException(

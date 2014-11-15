@@ -26,6 +26,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Security;
 using System.Text;
 
 using MsgPack.Serialization.AbstractSerializers;
@@ -163,6 +164,20 @@ namespace MsgPack.Serialization.CodeDomSerializers
 		}
 
 		/// <summary>
+		///		Gets a value indicating whether the generated serializers will be internal to MsgPack library itself.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if the generated serializers are internal to MsgPack library itself; otherwise, <c>false</c>.
+		/// </value>
+		/// <remarks>
+		///		When you use MsgPack in Unity3D, you can import the library in source code form to your assets.
+		///		And, you may also import generated serializers together, then the generated serializers and MsgPack library will be same assembly ultimately.
+		///		It causes compilation error because some of overriding members have accessbility <c>FamilyOrAssembly</c>(<c>protected internal</c> in C#),
+		///		so the generated source code must have the accessibility when and only when they will be same assembly as MsgPack library itself.
+		/// </remarks>
+		public bool IsInternalToMsgPackLibrary { get { return this._configuration.IsInternalToMsgPackLibrary; } }
+
+		/// <summary>
 		///		Resets internal states for new type.
 		/// </summary>
 		/// <param name="targetType">Type of the target.</param>
@@ -206,52 +221,57 @@ namespace MsgPack.Serialization.CodeDomSerializers
 		///		Generates codes for this context.
 		/// </summary>
 		/// <returns>The path of generated files.</returns>
+#if !NETFX_35
+		[SecuritySafeCritical]
+#endif // !NETFX_35
 		public IEnumerable<string> Generate()
 		{
-			var provider = CodeDomProvider.CreateProvider( this._configuration.Language );
-			var options =
-				new CodeGeneratorOptions
-				{
-					BlankLinesBetweenMembers = true,
-					ElseOnClosing = false,
-					IndentString = this._configuration.CodeIndentString,
-					VerbatimOrder = false
-				};
-
-			var directory =
-				Path.Combine(
-					this._configuration.OutputDirectory,
-					this._configuration.Namespace.Replace( Type.Delimiter, Path.DirectorySeparatorChar )
-				);
-			Directory.CreateDirectory( directory );
-
-			var result = new List<string>( _declaringTypes.Count );
-
-			foreach ( var declaringType in _declaringTypes )
+			using ( var provider = CodeDomProvider.CreateProvider( this._configuration.Language ) )
 			{
-				var typeFileName = declaringType.Value.Name;
-				if ( declaringType.Value.TypeParameters.Count > 0 )
+				var options =
+					new CodeGeneratorOptions
+					{
+						BlankLinesBetweenMembers = true,
+						ElseOnClosing = false,
+						IndentString = this._configuration.CodeIndentString,
+						VerbatimOrder = false
+					};
+
+				var directory =
+					Path.Combine(
+						this._configuration.OutputDirectory,
+						this._configuration.Namespace.Replace( Type.Delimiter, Path.DirectorySeparatorChar )
+						);
+				Directory.CreateDirectory( directory );
+
+				var result = new List<string>( _declaringTypes.Count );
+
+				foreach ( var declaringType in _declaringTypes )
 				{
-					typeFileName += "`" + declaringType.Value.TypeParameters.Count.ToString( CultureInfo.InvariantCulture );
+					var typeFileName = declaringType.Value.Name;
+					if ( declaringType.Value.TypeParameters.Count > 0 )
+					{
+						typeFileName += "`" + declaringType.Value.TypeParameters.Count.ToString( CultureInfo.InvariantCulture );
+					}
+
+					typeFileName += "." + provider.FileExtension;
+
+					var cn = new CodeNamespace( this._configuration.Namespace );
+					cn.Types.Add( declaringType.Value );
+					var cu = new CodeCompileUnit();
+					cu.Namespaces.Add( cn );
+
+					var filePath = Path.Combine( directory, typeFileName );
+					result.Add( filePath );
+
+					using ( var writer = new StreamWriter( filePath, false, Encoding.UTF8 ) )
+					{
+						provider.GenerateCodeFromCompileUnit( cu, writer, options );
+					}
 				}
 
-				typeFileName += "." + provider.FileExtension;
-
-				var cn = new CodeNamespace( this._configuration.Namespace );
-				cn.Types.Add( declaringType.Value );
-				var cu = new CodeCompileUnit();
-				cu.Namespaces.Add( cn );
-
-				var filePath = Path.Combine( directory, typeFileName );
-				result.Add( filePath );
-
-				using ( var writer = new StreamWriter( filePath, false, Encoding.UTF8 ) )
-				{
-					provider.GenerateCodeFromCompileUnit( cu, writer, options );
-				}
+				return result;
 			}
-
-			return result;
 		}
 
 		/// <summary>

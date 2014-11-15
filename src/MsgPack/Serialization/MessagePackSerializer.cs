@@ -18,36 +18,40 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.Linq;
 
 using MsgPack.Serialization.ReflectionSerializers;
-#if SILVERLIGHT || NETFX_35 || UNITY_ANDROID || UNITY_IPHONE
+#if SILVERLIGHT || NETFX_35 || UNITY
 using System.Collections.Generic;
 #else
 using System.Collections.Concurrent;
-#endif // SILVERLIGHT || NETFX_35 || UNITY_ANDROID || UNITY_IPHONE
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#endif // SILVERLIGHT || NETFX_35 || UNITY
+#if !UNITY
 using System.Diagnostics.Contracts;
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
-#if !WINDOWS_PHONE && !NETFX_35 && !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
+#if !WINDOWS_PHONE && !NETFX_35 && !XAMIOS && !XAMDROID && !UNITY
 using System.Globalization;
-#endif // !WINDOWS_PHONE && !NETFX_35 && !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
-#if NETFX_CORE
+#endif // !WINDOWS_PHONE && !NETFX_35 && !XAMIOS && !XAMDROID && !UNITY
+#if NETFX_CORE || WINDOWS_PHONE
 using System.Linq.Expressions;
 #endif
-#if !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
+#if !XAMIOS && !XAMDROID && !UNITY
 using MsgPack.Serialization.AbstractSerializers;
-#if !NETFX_CORE
-#if !SILVERLIGHT && !UNITY
+#if !NETFX_CORE && !WINDOWS_PHONE
+#if !SILVERLIGHT
 using MsgPack.Serialization.CodeDomSerializers;
 #endif // !SILVERLIGHT
 using MsgPack.Serialization.EmittingSerializers;
-#endif // NETFX_CORE
-#endif // !!XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
-#if !WINDOWS_PHONE && !NETFX_35 && !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // NETFX_CORE && !WINDOWS_PHONE
+#endif // !!XAMIOS && !XAMDROID && !UNITY
+#if !NETFX_35 && !XAMIOS && !XAMDROID && !UNITY
 using MsgPack.Serialization.ExpressionSerializers;
-#endif // !WINDOWS_PHONE && !NETFX_35 && !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !NETFX_35 && !XAMIOS && !XAMDROID && !UNITY
 
 namespace MsgPack.Serialization
 {
@@ -63,12 +67,12 @@ namespace MsgPack.Serialization
 		/// <returns>
 		///		New <see cref="MessagePackSerializer{T}"/> instance to serialize/deserialize the object tree which the top is <typeparamref name="T"/>.
 		/// </returns>
-		[Obsolete( "Use SerializationContext.Default.GetSerializer<T>() instead." )]
+		[Obsolete( "Use Get<T>() instead." )]
 		public static MessagePackSerializer<T> Create<T>()
 		{
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.Ensures( Contract.Result<MessagePackSerializer<T>>() != null );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 			return Create<T>( SerializationContext.Default );
 		}
@@ -86,7 +90,7 @@ namespace MsgPack.Serialization
 		/// <exception cref="ArgumentNullException">
 		///		<paramref name="context"/> is <c>null</c>.
 		/// </exception>
-		[Obsolete( "Use SerializationContext.GetSerializer<T>() instead." )]
+		[Obsolete( "Use Get<T>(SerializationContext) instead." )]
 		public static MessagePackSerializer<T> Create<T>( SerializationContext context )
 		{
 			if ( context == null )
@@ -97,29 +101,129 @@ namespace MsgPack.Serialization
 			return CreateInternal<T>( context );
 		}
 
+		/// <summary>
+		///		Gets existing or new <see cref="MessagePackSerializer{T}"/> instance with default context (<see cref="SerializationContext.Default"/>).
+		/// </summary>
+		/// <typeparam name="T">Target type.</typeparam>
+		/// <returns>
+		///		<see cref="MessagePackSerializer{T}"/>.
+		///		If there is exiting one, returns it.
+		///		Else the new instance will be created.
+		/// </returns>
+		/// <remarks>
+		///		This method simply invokes <see cref="Get{T}(SerializationContext)"/> with <see cref="SerializationContext.Default"/> for the <c>context</c>.
+		/// </remarks>
+		public static MessagePackSerializer<T> Get<T>()
+		{
+			return Get<T>( SerializationContext.Default );
+		}
+
+		/// <summary>
+		///		Gets existing or new <see cref="MessagePackSerializer{T}"/> instance with default context (<see cref="SerializationContext.Default"/>).
+		/// </summary>
+		/// <typeparam name="T">Target type.</typeparam>
+		/// <param name="providerParameter">A provider specific parameter. See remarks section for details.</param>
+		/// <returns>
+		///		<see cref="MessagePackSerializer{T}"/>.
+		///		If there is exiting one, returns it.
+		///		Else the new instance will be created.
+		/// </returns>
+		/// <remarks>
+		///		This method simply invokes <see cref="Get{T}(SerializationContext,Object)"/> with <see cref="SerializationContext.Default"/> for the <c>context</c>.
+		/// </remarks>
+		public static MessagePackSerializer<T> Get<T>( object providerParameter )
+		{
+			return Get<T>( SerializationContext.Default, providerParameter );
+		}
+
+		/// <summary>
+		///		Gets existing or new <see cref="MessagePackSerializer{T}"/> instance with specified <see cref="SerializationContext"/>.
+		/// </summary>
+		/// <typeparam name="T">Target type.</typeparam>
+		/// <param name="context">
+		///		<see cref="SerializationContext"/> to store known/created serializers.
+		/// </param>
+		/// <returns>
+		///		<see cref="MessagePackSerializer{T}"/>.
+		///		If there is exiting one, returns it.
+		///		Else the new instance will be created.
+		/// </returns>
+		/// <exception cref="ArgumentNullException">
+		///		<paramref name="context"/> is <c>null</c>.
+		/// </exception>
+		/// <remarks>
+		///		This method simply invokes <see cref="Get{T}(SerializationContext,Object)"/> with <c>null</c> for the <c>providerParameter</c>.
+		/// </remarks>
+		public static MessagePackSerializer<T> Get<T>( SerializationContext context )
+		{
+			return Get<T>( context, null );
+		}
+
+		/// <summary>
+		///		Gets existing or new <see cref="MessagePackSerializer{T}"/> instance with specified <see cref="SerializationContext"/>.
+		/// </summary>
+		/// <typeparam name="T">Target type.</typeparam>
+		/// <param name="context">
+		///		<see cref="SerializationContext"/> to store known/created serializers.
+		/// </param>
+		/// <param name="providerParameter">A provider specific parameter. See remarks section for details.</param>
+		/// <returns>
+		///		<see cref="MessagePackSerializer{T}"/>.
+		///		If there is exiting one, returns it.
+		///		Else the new instance will be created.
+		/// </returns>
+		/// <exception cref="ArgumentNullException">
+		///		<paramref name="context"/> is <c>null</c>.
+		/// </exception>
+		/// <remarks>
+		///		<para>
+		///			This method simply invokes <see cref="SerializationContext.GetSerializer{T}(Object)"/>, so see the method description for details.
+		///		</para>
+		///		<para>
+		///			Currently, only following provider parameters are supported.
+		///			<list type="table">
+		///				<listheader>
+		///					<term>Target type</term>
+		///					<description>Provider parameter</description>
+		///				</listheader>
+		///				<item>
+		///					<term><see cref="EnumMessagePackSerializer{TEnum}"/> or its descendants.</term>
+		///					<description><see cref="EnumSerializationMethod"/>. The returning instance corresponds to this value for serialization.</description>
+		///				</item>
+		///			</list>
+		///			<note><c>null</c> is valid value for <paramref name="providerParameter"/> and it indeicates default behavior of parameter.</note>
+		///		</para>
+		/// </remarks>
+		public static MessagePackSerializer<T> Get<T>( SerializationContext context, object providerParameter )
+		{
+			if ( context == null )
+			{
+				throw new ArgumentNullException( "context" );
+			}
+
+			return context.GetSerializer<T>( providerParameter );
+		}
+
 		internal static MessagePackSerializer<T> CreateInternal<T>( SerializationContext context )
 		{
-#if XAMIOS || XAMDROID || UNITY_IPHONE || UNITY_ANDROID
-			return context.GetSerializer<T>();
-#else
-
+#if !XAMIOS && !XAMDROID && !UNITY
 			Contract.Ensures( Contract.Result<MessagePackSerializer<T>>() != null );
-
-			//Func<SerializationContext, SerializerBuilder<T>> builderProvider;
-			ISerializerBuilder<T> builder = null;
-#if NETFX_CORE
+#endif // !XAMIOS && !XAMDROID && !UNITY
+#if XAMIOS || XAMDROID || UNITY
+			return CreateReflectionInternal<T>( context );
+#else
+			ISerializerBuilder<T> builder;
+#if NETFX_CORE || WINDOWS_PHONE
 			builder = new ExpressionTreeSerializerBuilder<T>();
 #elif SILVERLIGHT
 			builder = new DynamicMethodSerializerBuilder<T>();
 #else
 			switch ( context.EmitterFlavor )
 			{
-#if !NETFX_35 && !NETFX_40 && !NETFX_CORE && !WINDOWS_PHONE && !SILVERLIGHT
 				case EmitterFlavor.ReflectionBased:
 				{
 					return CreateReflectionInternal<T>( context );
 				}
-#endif // !NETFX_35 && !NETFX_40 && !NETFX_CORE && !WINDOWS_PHONE && !SILVERLIGHT
 #if !WINDOWS_PHONE && !NETFX_35
 				case EmitterFlavor.ExpressionBased:
 				{
@@ -151,26 +255,24 @@ namespace MsgPack.Serialization
 						);
 					}
 #endif // if !NETFX_35
-#if !UNITY
 					builder = new CodeDomSerializerBuilder<T>();
-#endif
 					break;
 				}
 			}
 #endif // NETFX_CORE else
 
 			return new AutoMessagePackSerializer<T>( context, builder );
-#endif // XAMIOS || XAMDROID || UNITY_IPHONE || UNITY_ANDROID else
+#endif // XAMIOS || XAMDROID || UNITY else
 		}
 
-#if !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
+#if !XAMIOS && !XAMDROID && !UNITY
 #if !SILVERLIGHT && !NETFX_35
 		private static readonly ConcurrentDictionary<Type, Func<SerializationContext, IMessagePackSingleObjectSerializer>> _creatorCache = new ConcurrentDictionary<Type, Func<SerializationContext, IMessagePackSingleObjectSerializer>>();
 #else
 		private static readonly object _syncRoot = new object();
 		private static readonly Dictionary<Type, Func<SerializationContext, IMessagePackSingleObjectSerializer>> _creatorCache = new Dictionary<Type, Func<SerializationContext, IMessagePackSingleObjectSerializer>>();
 #endif // !SILVERLIGHT && !NETFX_35
-#endif // !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !XAMIOS && !XAMDROID && !UNITY
 
 		/// <summary>
 		///		Creates new <see cref="IMessagePackSerializer"/> instance with <see cref="SerializationContext.Default"/>.
@@ -185,7 +287,7 @@ namespace MsgPack.Serialization
 		/// <remarks>
 		///		To avoid boxing and strongly typed API is prefered, use <see cref="Create{T}()"/> instead when possible.
 		/// </remarks>
-		[Obsolete( "Use SerializationContext.Default.GetSerializer(Type) instead." )]
+		[Obsolete( "Use Get(Type) instead." )]
 		public static IMessagePackSingleObjectSerializer Create( Type targetType )
 		{
 			return Create( targetType, SerializationContext.Default );
@@ -208,7 +310,7 @@ namespace MsgPack.Serialization
 		/// <remarks>
 		///		To avoid boxing and strongly typed API is prefered, use <see cref="Create{T}(SerializationContext)"/> instead when possible.
 		/// </remarks>
-		[Obsolete( "Use SerializationContext.GetSerializer(Type) instead." )]
+		[Obsolete( "Use Get(Type,SerializationContext) instead." )]
 		public static IMessagePackSingleObjectSerializer Create( Type targetType, SerializationContext context )
 		{
 			if ( targetType == null )
@@ -221,12 +323,12 @@ namespace MsgPack.Serialization
 				throw new ArgumentNullException( "context" );
 			}
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.Ensures( Contract.Result<IMessagePackSerializer>() != null );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
-#if XAMIOS || XAMDROID || UNITY_ANDROID || UNITY_IPHONE
-			return context.GetSerializer( targetType );
+#if XAMIOS || XAMDROID || UNITY
+			return CreateReflectionInternal( context, targetType );
 #else
 			// MPS.Create should always return new instance, and creator delegate should be cached for performance.
 #if NETFX_CORE
@@ -285,10 +387,140 @@ namespace MsgPack.Serialization
 				);
 #endif // NETFX_CORE
 			return factory( context );
-#endif // XAMIOS || XAMDROID || UNITY_ANDROID || UNITY_IPHONE else
+#endif // XAMIOS || XAMDROID || UNITY else
 		}
 
-#if XAMIOS || XAMDROID || UNITY_ANDROID || UNITY_IPHONE
+		/// <summary>
+		///		Gets existing or new <see cref="IMessagePackSerializer"/> instance with default context (<see cref="SerializationContext.Default"/>).
+		/// </summary>
+		/// <param name="targetType">Target type.</param>
+		/// <returns>
+		///		<see cref="IMessagePackSingleObjectSerializer"/>.
+		///		If there is exiting one, returns it.
+		///		Else the new instance will be created.
+		/// </returns>
+		/// <exception cref="ArgumentNullException">
+		///		<paramref name="targetType"/> is <c>null</c>.
+		/// </exception>
+		/// <remarks>
+		///		<para>
+		///			This method simply invokes <see cref="SerializationContext.GetSerializer(Type)"/>, so see the method description for details.
+		///		</para>
+		///		<para>
+		///		Although <see cref="Get{T}()"/> is preferred,
+		///		this method can be used from non-generic type or methods.
+		///		</para>
+		/// </remarks>
+		public static IMessagePackSingleObjectSerializer Get(
+			Type targetType )
+		{
+			return Get( targetType, SerializationContext.Default, null );
+		}
+
+		/// <summary>
+		///		Gets existing or new <see cref="IMessagePackSerializer"/> instance with default context (<see cref="SerializationContext.Default"/>).
+		/// </summary>
+		/// <param name="targetType">Target type.</param>
+		/// <param name="providerParameter">A provider specific parameter. See remarks section for details.</param>
+		/// <returns>
+		///		<see cref="IMessagePackSingleObjectSerializer"/>.
+		///		If there is exiting one, returns it.
+		///		Else the new instance will be created.
+		/// </returns>
+		/// <exception cref="ArgumentNullException">
+		///		<paramref name="targetType"/> is <c>null</c>.
+		/// </exception>
+		/// <remarks>
+		///		<para>
+		///			This method simply invokes <see cref="SerializationContext.GetSerializer(Type,Object)"/>, so see the method description for details.
+		///		</para>
+		///		<para>
+		///		Although <see cref="Get{T}(Object)"/> is preferred,
+		///		this method can be used from non-generic type or methods.
+		///		</para>
+		/// </remarks>
+		public static IMessagePackSingleObjectSerializer Get(
+			Type targetType,
+			object providerParameter )
+		{
+			return Get( targetType, SerializationContext.Default, providerParameter );
+		}
+
+		/// <summary>
+		///		Gets existing or new <see cref="IMessagePackSerializer"/> instance with specified <see cref="SerializationContext"/>.
+		/// </summary>
+		/// <param name="targetType">Target type.</param>
+		/// <param name="context">
+		///		<see cref="SerializationContext"/> to store known/created serializers.
+		/// </param>
+		/// <returns>
+		///		<see cref="IMessagePackSingleObjectSerializer"/>.
+		///		If there is exiting one, returns it.
+		///		Else the new instance will be created.
+		/// </returns>
+		/// <exception cref="ArgumentNullException">
+		///		<paramref name="targetType"/> is <c>null</c>.
+		///		Or, <paramref name="context"/> is <c>null</c>.
+		/// </exception>
+		/// <remarks>
+		///		<para>
+		///			This method simply invokes <see cref="SerializationContext.GetSerializer(Type)"/>, so see the method description for details.
+		///		</para>
+		///		<para>
+		///		Although <see cref="Get{T}(SerializationContext)"/> is preferred,
+		///		this method can be used from non-generic type or methods.
+		///		</para>
+		/// </remarks>
+		public static IMessagePackSingleObjectSerializer Get(
+			Type targetType,
+			SerializationContext context )
+		{
+			return Get( targetType, context, null );
+		}
+
+		/// <summary>
+		///		Gets existing or new <see cref="IMessagePackSerializer"/> instance with specified <see cref="SerializationContext"/>.
+		/// </summary>
+		/// <param name="targetType">Target type.</param>
+		/// <param name="context">
+		///		<see cref="SerializationContext"/> to store known/created serializers.
+		/// </param>
+		/// <param name="providerParameter">A provider specific parameter. See remarks section for details.</param>
+		/// <returns>
+		///		<see cref="IMessagePackSingleObjectSerializer"/>.
+		///		If there is exiting one, returns it.
+		///		Else the new instance will be created.
+		/// </returns>
+		/// <exception cref="ArgumentNullException">
+		///		<paramref name="targetType"/> is <c>null</c>.
+		///		Or, <paramref name="context"/> is <c>null</c>.
+		/// </exception>
+		/// <remarks>
+		///		<para>
+		///			This method simply invokes <see cref="SerializationContext.GetSerializer(Type,Object)"/>, so see the method description for details.
+		///		</para>
+		///		<para>
+		///		Although <see cref="Get{T}(SerializationContext,Object)"/> is preferred,
+		///		this method can be used from non-generic type or methods.
+		///		</para>
+		/// </remarks>
+		public static IMessagePackSingleObjectSerializer Get(
+			Type targetType, SerializationContext context, object providerParameter )
+		{
+			if ( targetType == null )
+			{
+				throw new ArgumentNullException( "targetType" );
+			}
+
+			if ( context == null )
+			{
+				throw new ArgumentNullException( "context" );
+			}
+
+			return context.GetSerializer( targetType, providerParameter );
+		}
+
+#if XAMIOS || XAMDROID || UNITY
 		private static readonly System.Reflection.MethodInfo CreateReflectionInternal_1 = 
 			typeof( MessagePackSerializer ).GetMethod( 
 				"CreateReflectionInternal", 
@@ -300,7 +532,7 @@ namespace MsgPack.Serialization
 
 		internal static IMessagePackSingleObjectSerializer CreateReflectionInternal( SerializationContext context, Type targetType )
 		{
-#if UNITY_ANDROID || UNITY_IPHONE
+#if UNITY_ANDROID || UNITY
 			return
 				(
 					Delegate.CreateDelegate( 
@@ -314,10 +546,19 @@ namespace MsgPack.Serialization
 				as Func<SerializationContext, object> )( context ) as IMessagePackSingleObjectSerializer;
 #endif
 		}
-#endif // XAMIOS || XAMDROID || UNITY_ANDROID || UNITY_IPHONE
+#endif // XAMIOS || XAMDROID || UNITY
 
 		internal static MessagePackSerializer<T> CreateReflectionInternal<T>( SerializationContext context )
 		{
+			var serializer = context.Serializers.Get<T>( context );
+
+			if ( serializer != null )
+			{
+				// For MessagePack.Create compatibility. 
+				// Required for built-in types.
+				return serializer;
+			}
+
 			var traits = typeof( T ).GetCollectionTraits();
 			switch ( traits.CollectionType )
 			{
@@ -335,7 +576,7 @@ namespace MsgPack.Serialization
 					{
 						return ReflectionSerializerHelper.CreateReflectionEnuMessagePackSerializer<T>( context );
 					}
-#if !WINDOWS_PHONE && !NETFX_35 && !UNITY_IPHONE && !UNITY_ANDROID
+#if !WINDOWS_PHONE && !NETFX_35 && !UNITY
 					if ( ( typeof( T ).GetAssembly().Equals( typeof( object ).GetAssembly() ) ||
 								typeof( T ).GetAssembly().Equals( typeof( Enumerable ).GetAssembly() ) )
 							  && typeof( T ).GetIsPublic() &&
@@ -343,7 +584,7 @@ namespace MsgPack.Serialization
 					{
 						return new ReflectionTupleMessagePackSerializer<T>( context );
 					}
-#endif // !WINDOWS_PHONE && !NETFX_35 && !UNITY_IPHONE && !UNITY_ANDROID
+#endif // !WINDOWS_PHONE && !NETFX_35 && !UNITY
 
 					return new ReflectionObjectMessagePackSerializer<T>( context );
 				}

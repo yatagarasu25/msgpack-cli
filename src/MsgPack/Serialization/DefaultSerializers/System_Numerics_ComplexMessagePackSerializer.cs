@@ -18,7 +18,11 @@
 //
 #endregion -- License Terms --
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
+#if !UNITY && !WINDOWS_PHONE
 using System;
 using System.Numerics;
 
@@ -30,6 +34,7 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_Numerics_ComplexMessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
 		protected internal override void PackToCore( Packer packer, Complex objectTree )
 		{
 			packer.PackArrayHeader( 2 );
@@ -37,6 +42,7 @@ namespace MsgPack.Serialization.DefaultSerializers
 			packer.Pack( objectTree.Imaginary );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
 		protected internal override Complex UnpackFromCore( Unpacker unpacker )
 		{
 			if ( !unpacker.Read() )
@@ -57,4 +63,4 @@ namespace MsgPack.Serialization.DefaultSerializers
 		}
 	}
 }
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY && !WINDOWS_PHONE

@@ -18,11 +18,15 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.Collections.Generic;
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 using System.Diagnostics.Contracts;
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 #if NETFX_CORE
 using System.Reflection;
 #endif
@@ -35,7 +39,11 @@ namespace MsgPack.Serialization
 	/// <summary>
 	///		Repository for key type with RWlock scheme.
 	/// </summary>
-	internal class TypeKeyRepository : IDisposable
+	[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Justification = "Repository should not be disposable because it may be shared so it is difficult to determine disposition timing" )]
+#if !NETFX_35 && !UNITY
+	[SecuritySafeCritical]
+#endif
+	internal class TypeKeyRepository
 	{
 		private volatile int _isFrozen;
 
@@ -70,23 +78,12 @@ namespace MsgPack.Serialization
 			this._table = table;
 		}
 
-		public void Dispose()
-		{
-			this.Dispose( true );
-			GC.SuppressFinalize( this );
-		}
-
-		protected virtual void Dispose( bool disposing )
-		{
-			if ( disposing )
-			{
-				this._lock.Dispose();
-			}
-		}
-
-#if !PARTIAL_TRUST && !SILVERLIGHT
+#if !NETFX_35 && !UNITY
 		[SecuritySafeCritical]
 #endif
+#if NETFX_35 || UNITY
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "CER is OK" )]
+#endif // NETFX_35 || UNITY
 		private Dictionary<RuntimeTypeHandle, object> GetClonedTable()
 		{
 			bool holdsReadLock = false;
@@ -120,9 +117,12 @@ namespace MsgPack.Serialization
 			return this.GetCore( type, out matched, out genericDefinitionMatched );
 		}
 
-#if !PARTIAL_TRUST && !SILVERLIGHT
+#if !NETFX_35 && !UNITY
 		[SecuritySafeCritical]
 #endif
+#if NETFX_35 || UNITY
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "CER is OK" )]
+#endif // NETFX_35 || UNITY
 		private bool GetCore( Type type, out object matched, out object genericDefinitionMatched )
 		{
 			bool holdsReadLock = false;
@@ -178,9 +178,9 @@ namespace MsgPack.Serialization
 
 		public bool Register( Type type, object entry, bool allowOverwrite )
 		{
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.Assert( entry != null );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 			if ( this.IsFrozen )
 			{
@@ -190,9 +190,12 @@ namespace MsgPack.Serialization
 			return this.RegisterCore( type, entry, allowOverwrite );
 		}
 
-#if !PARTIAL_TRUST && !SILVERLIGHT
+#if !NETFX_35 && !UNITY
 		[SecuritySafeCritical]
 #endif
+#if NETFX_35 || UNITY
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "CER is OK" )]
+#endif // NETFX_35 || UNITY
 		private bool RegisterCore( Type key, object value, bool allowOverwrite )
 		{
 			if ( allowOverwrite || !this._table.ContainsKey( key.TypeHandle ) )
@@ -242,9 +245,12 @@ namespace MsgPack.Serialization
 			return this.UnregisterCore( type );
 		}
 
-#if !PARTIAL_TRUST && !SILVERLIGHT
+#if !NETFX_35 && !UNITY
 		[SecuritySafeCritical]
 #endif
+#if NETFX_35 || UNITY
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "CER is OK" )]
+#endif // NETFX_35 || UNITY
 		private bool UnregisterCore( Type key )
 		{
 			if ( this._table.ContainsKey( key.TypeHandle ) )
@@ -278,7 +284,7 @@ namespace MsgPack.Serialization
 			return false;
 		}
 
-#if !PARTIAL_TRUST && !SILVERLIGHT
+#if !NETFX_35 && !UNITY
 		[SecuritySafeCritical]
 #endif
 		internal bool Coontains( Type type )

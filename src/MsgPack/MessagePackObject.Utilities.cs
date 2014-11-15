@@ -18,13 +18,17 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 using System.Diagnostics.Contracts;
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 using System.Globalization;
 using System.Linq;
 #if NETFX_CORE
@@ -206,7 +210,6 @@ namespace MsgPack
 		public override bool Equals( Object obj )
 		{
 			MessagePackObjectDictionary asDictionary;
-			// ReSharper disable RedundantIfElseBlock
 			if ( ReferenceEquals( obj, null ) )
 			{
 				return this.IsNil;
@@ -223,7 +226,6 @@ namespace MsgPack
 			{
 				return this.Equals( ( MessagePackObject )obj );
 			}
-			// ReSharper restore RedundantIfElseBlock
 		}
 
 		/// <summary>
@@ -235,7 +237,6 @@ namespace MsgPack
 		/// </returns>
 		public bool Equals( MessagePackObject other )
 		{
-			// ReSharper disable RedundantIfElseBlock
 			if ( this._handleOrTypeCode == null )
 			{
 				return other._handleOrTypeCode == null;
@@ -254,67 +255,7 @@ namespace MsgPack
 					return false;
 				}
 
-				if ( valueTypeCode.TypeCode == MessagePackValueTypeCode.Boolean )
-				{
-					if ( otherValuetypeCode.TypeCode != MessagePackValueTypeCode.Boolean )
-					{
-						return false;
-					}
-
-					return ( bool )this == ( bool )other;
-				}
-				else if ( otherValuetypeCode.TypeCode == MessagePackValueTypeCode.Boolean )
-				{
-					return false;
-				}
-
-				if ( valueTypeCode.IsInteger )
-				{
-					if ( otherValuetypeCode.IsInteger )
-					{
-						return IntegerIntegerEquals( this._value, valueTypeCode, other._value, otherValuetypeCode );
-					}
-					else if ( otherValuetypeCode.TypeCode == MessagePackValueTypeCode.Single )
-					{
-						return IntegerSingleEquals( this, other );
-					}
-					else if ( otherValuetypeCode.TypeCode == MessagePackValueTypeCode.Double )
-					{
-						return IntegerDoubleEquals( this, other );
-					}
-				}
-				else if ( valueTypeCode.TypeCode == MessagePackValueTypeCode.Double )
-				{
-					if ( otherValuetypeCode.IsInteger )
-					{
-						return IntegerDoubleEquals( other, this );
-					}
-					else if ( otherValuetypeCode.TypeCode == MessagePackValueTypeCode.Single )
-					{
-						return ( double )this == ( float )other;
-					}
-					else if ( otherValuetypeCode.TypeCode == MessagePackValueTypeCode.Double )
-					{
-						// Cannot compare _value because there might be not normalized.
-						return ( double )this == ( double )other;
-					}
-				}
-				else if ( valueTypeCode.TypeCode == MessagePackValueTypeCode.Single )
-				{
-					if ( otherValuetypeCode.IsInteger )
-					{
-						return IntegerSingleEquals( other, this );
-					}
-					else if ( otherValuetypeCode.TypeCode == MessagePackValueTypeCode.Single )
-					{
-						// Cannot compare _value because there might be not normalized.
-						return ( float )this == ( float )other;
-					}
-					else if ( otherValuetypeCode.TypeCode == MessagePackValueTypeCode.Double )
-					{
-						return ( float )this == ( double )other;
-					}
-				}
+				return this.EqualsWhenValueType( other, valueTypeCode, otherValuetypeCode );
 			}
 
 			{
@@ -371,7 +312,6 @@ namespace MsgPack
 					return true;
 				}
 			}
-			// ReSharper restore RedundantIfElseBlock
 
 			{
 				var asExtendedTypeObjectBody = this._handleOrTypeCode as byte[];
@@ -395,9 +335,78 @@ namespace MsgPack
 			return this._handleOrTypeCode.Equals( other._handleOrTypeCode );
 		}
 
+		private bool EqualsWhenValueType(
+			MessagePackObject other,
+			ValueTypeCode valueTypeCode,
+			ValueTypeCode otherValuetypeCode )
+		{
+			if ( valueTypeCode.TypeCode == MessagePackValueTypeCode.Boolean )
+			{
+				if ( otherValuetypeCode.TypeCode != MessagePackValueTypeCode.Boolean )
+				{
+					return false;
+				}
+
+				return ( bool ) this == ( bool ) other;
+			}
+			else if ( otherValuetypeCode.TypeCode == MessagePackValueTypeCode.Boolean )
+			{
+				return false;
+			}
+
+			if ( valueTypeCode.IsInteger )
+			{
+				if ( otherValuetypeCode.IsInteger )
+				{
+					return IntegerIntegerEquals( this._value, valueTypeCode, other._value, otherValuetypeCode );
+				}
+				else if ( otherValuetypeCode.TypeCode == MessagePackValueTypeCode.Single )
+				{
+					return IntegerSingleEquals( this, other );
+				}
+				else if ( otherValuetypeCode.TypeCode == MessagePackValueTypeCode.Double )
+				{
+					return IntegerDoubleEquals( this, other );
+				}
+			}
+			else if ( valueTypeCode.TypeCode == MessagePackValueTypeCode.Double )
+			{
+				if ( otherValuetypeCode.IsInteger )
+				{
+					return IntegerDoubleEquals( other, this );
+				}
+				else if ( otherValuetypeCode.TypeCode == MessagePackValueTypeCode.Single )
+				{
+					return ( double ) this == ( float ) other;
+				}
+				else if ( otherValuetypeCode.TypeCode == MessagePackValueTypeCode.Double )
+				{
+					// Cannot compare _value because there might be not normalized.
+					return ( double ) this == ( double ) other;
+				}
+			}
+			else if ( valueTypeCode.TypeCode == MessagePackValueTypeCode.Single )
+			{
+				if ( otherValuetypeCode.IsInteger )
+				{
+					return IntegerSingleEquals( other, this );
+				}
+				else if ( otherValuetypeCode.TypeCode == MessagePackValueTypeCode.Single )
+				{
+					// Cannot compare _value because there might be not normalized.
+					return ( float ) this == ( float ) other;
+				}
+				else if ( otherValuetypeCode.TypeCode == MessagePackValueTypeCode.Double )
+				{
+					return ( float ) this == ( double ) other;
+				}
+			}
+
+			return false;
+		}
+
 		private static bool IntegerIntegerEquals( ulong left, ValueTypeCode leftTypeCode, ulong right, ValueTypeCode rightTypeCode )
 		{
-			// ReSharper disable RedundantIfElseBlock
 			if ( leftTypeCode.IsSigned )
 			{
 				if ( rightTypeCode.IsSigned )
@@ -432,19 +441,17 @@ namespace MsgPack
 					return left == right;
 				}
 			}
-			// ReSharper restore RedundantIfElseBlock
 		}
 
 		private static bool IntegerSingleEquals( MessagePackObject integer, MessagePackObject real )
 		{
-#if DEBUG && !UNITY_ANDROID && !UNITY_IPHONE
+#if DEBUG && !UNITY
 			Contract.Assert( integer._handleOrTypeCode as ValueTypeCode != null, "integer._handleOrTypeCode as ValueTypeCode != null" );
-#endif // DEBUG && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // DEBUG && !UNITY
 			if ( ( integer._handleOrTypeCode as ValueTypeCode ).IsSigned )
 			{
 				return unchecked( ( long )integer._value ) == ( float )real;
 			}
-			// ReSharper disable once RedundantIfElseBlock
 			else
 			{
 				return integer._value == ( float )real;
@@ -453,14 +460,13 @@ namespace MsgPack
 
 		private static bool IntegerDoubleEquals( MessagePackObject integer, MessagePackObject real )
 		{
-#if DEBUG && !UNITY_ANDROID && !UNITY_IPHONE
+#if DEBUG && !UNITY
 			Contract.Assert( integer._handleOrTypeCode as ValueTypeCode != null, "integer._handleOrTypeCode as ValueTypeCode != null" );
-#endif // DEBUG && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // DEBUG && !UNITY
 			if ( ( integer._handleOrTypeCode as ValueTypeCode ).IsSigned )
 			{
 				return unchecked( ( long )integer._value ) == ( double )real;
 			}
-			// ReSharper disable once RedundantIfElseBlock
 			else
 			{
 				return integer._value == ( double )real;
@@ -522,9 +528,9 @@ namespace MsgPack
 			}
 
 			{
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 				Contract.Assert( false, String.Format( "(this._handleOrTypeCode is string) but {0}", this._handleOrTypeCode.GetType() ) );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 				return 0;
 			}
 			// ReSharper restore NonReadonlyFieldInGetHashCode
@@ -672,116 +678,8 @@ namespace MsgPack
 				var asBinary = this._handleOrTypeCode as MessagePackString;
 				if ( asBinary != null )
 				{
-					// TODO: big array support...
-					var asString = asBinary.TryGetString();
-					if ( asString != null )
-					{
-						if ( isJson )
-						{
-							buffer.Append( '"' );
-							foreach ( var c in asString )
-							{
-								switch ( c )
-								{
-									case '"':
-									{
-										buffer.Append( '\\' ).Append( '"' );
-										break;
-									}
-									case '\\':
-									{
-										buffer.Append( '\\' ).Append( '\\' );
-										break;
-									}
-									case '/':
-									{
-										buffer.Append( '\\' ).Append( '/' );
-										break;
-									}
-									case '\b':
-									{
-										buffer.Append( '\\' ).Append( 'b' );
-										break;
-									}
-									case '\f':
-									{
-										buffer.Append( '\\' ).Append( 'f' );
-										break;
-									}
-									case '\n':
-									{
-										buffer.Append( '\\' ).Append( 'n' );
-										break;
-									}
-									case '\r':
-									{
-										buffer.Append( '\\' ).Append( 'r' );
-										break;
-									}
-									case '\t':
-									{
-										buffer.Append( '\\' ).Append( 't' );
-										break;
-									}
-									case ' ':
-									{
-										buffer.Append( ' ' );
-										break;
-									}
-									default:
-									{
-										switch ( CharUnicodeInfo.GetUnicodeCategory( c ) )
-										{
-											case UnicodeCategory.Control:
-											case UnicodeCategory.OtherNotAssigned:
-											case UnicodeCategory.Format:
-											case UnicodeCategory.LineSeparator:
-											case UnicodeCategory.ParagraphSeparator:
-											case UnicodeCategory.SpaceSeparator:
-											case UnicodeCategory.PrivateUse:
-											case UnicodeCategory.Surrogate:
-											{
-												buffer.Append( '\\' ).Append( 'u' ).Append( ( ( ushort )c ).ToString( "X", CultureInfo.InvariantCulture ) );
-												break;
-											}
-											default:
-											{
-												buffer.Append( c );
-												break;
-											}
-										}
-
-										break;
-									}
-								}
-							}
-
-							buffer.Append( '"' );
-						}
-						else
-						{
-							buffer.Append( asString );
-						}
-
-						return;
-					}
-
-					var asBlob = asBinary.UnsafeGetBuffer();
-					if ( asBlob != null )
-					{
-						if ( isJson )
-						{
-							buffer.Append( '"' );
-							Binary.ToHexString( asBlob, buffer );
-							buffer.Append( '"' );
-						}
-						else
-						{
-							Binary.ToHexString( asBlob, buffer );
-						}
-
-						return;
-					}
+					ToStringBinary( buffer, isJson, asBinary );
+					return;
 				}
 			}
 
@@ -795,9 +693,9 @@ namespace MsgPack
 			}
 
 			// may be string
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.Assert( false, String.Format( "(this._handleOrTypeCode is string) but {0}", this._handleOrTypeCode.GetType() ) );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 			// ReSharper disable HeuristicUnreachableCode
 			if ( isJson )
 			{
@@ -808,6 +706,118 @@ namespace MsgPack
 				buffer.Append( this._handleOrTypeCode );
 			}
 			// ReSharper restore HeuristicUnreachableCode
+		}
+
+		private static void ToStringBinary( StringBuilder buffer, bool isJson, MessagePackString asBinary )
+		{
+			// TODO: big array support...
+			var asString = asBinary.TryGetString();
+			if ( asString != null )
+			{
+				if ( isJson )
+				{
+					buffer.Append( '"' );
+					foreach ( var c in asString )
+					{
+						switch ( c )
+						{
+							case '"':
+							{
+								buffer.Append( '\\' ).Append( '"' );
+								break;
+							}
+							case '\\':
+							{
+								buffer.Append( '\\' ).Append( '\\' );
+								break;
+							}
+							case '/':
+							{
+								buffer.Append( '\\' ).Append( '/' );
+								break;
+							}
+							case '\b':
+							{
+								buffer.Append( '\\' ).Append( 'b' );
+								break;
+							}
+							case '\f':
+							{
+								buffer.Append( '\\' ).Append( 'f' );
+								break;
+							}
+							case '\n':
+							{
+								buffer.Append( '\\' ).Append( 'n' );
+								break;
+							}
+							case '\r':
+							{
+								buffer.Append( '\\' ).Append( 'r' );
+								break;
+							}
+							case '\t':
+							{
+								buffer.Append( '\\' ).Append( 't' );
+								break;
+							}
+							case ' ':
+							{
+								buffer.Append( ' ' );
+								break;
+							}
+							default:
+							{
+								switch ( CharUnicodeInfo.GetUnicodeCategory( c ) )
+								{
+									case UnicodeCategory.Control:
+									case UnicodeCategory.OtherNotAssigned:
+									case UnicodeCategory.Format:
+									case UnicodeCategory.LineSeparator:
+									case UnicodeCategory.ParagraphSeparator:
+									case UnicodeCategory.SpaceSeparator:
+									case UnicodeCategory.PrivateUse:
+									case UnicodeCategory.Surrogate:
+									{
+										buffer.Append( '\\' ).Append( 'u' ).Append( ( ( ushort ) c ).ToString( "X", CultureInfo.InvariantCulture ) );
+										break;
+									}
+									default:
+									{
+										buffer.Append( c );
+										break;
+									}
+								}
+
+								break;
+							}
+						}
+					}
+
+					buffer.Append( '"' );
+				}
+				else
+				{
+					buffer.Append( asString );
+				}
+
+				return;
+			}
+
+			var asBlob = asBinary.UnsafeGetBuffer();
+			if ( asBlob != null )
+			{
+				if ( isJson )
+				{
+					buffer.Append( '"' );
+					Binary.ToHexString( asBlob, buffer );
+					buffer.Append( '"' );
+				}
+				else
+				{
+					Binary.ToHexString( asBlob, buffer );
+				}
+			}
 		}
 
 		#endregion -- Structure Methods --
@@ -831,6 +841,7 @@ namespace MsgPack
 		/// <param name="type">Target type.</param>
 		/// <returns>If the underlying value of this instance is <paramref name="type"/> then true, otherwise false.</returns>
 		/// <exception cref="ArgumentNullException"><paramref name="type"/> is null.</exception>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = "Switch" )]
 		public bool? IsTypeOf( Type type )
 		{
 			if ( type == null )
@@ -838,9 +849,9 @@ namespace MsgPack
 				throw new ArgumentNullException( "type" );
 			}
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 			if ( this._handleOrTypeCode == null )
@@ -991,7 +1002,6 @@ namespace MsgPack
 				}
 
 				var typeCode = this._handleOrTypeCode as ValueTypeCode;
-				// ReSharper disable RedundantIfElseBlock
 				if ( typeCode == null )
 				{
 					var asMps = this._handleOrTypeCode as MessagePackString;
@@ -1008,7 +1018,6 @@ namespace MsgPack
 				{
 					return typeCode.Type;
 				}
-				// ReSharper restore RedundantIfElseBlock
 			}
 		}
 
@@ -1027,9 +1036,9 @@ namespace MsgPack
 				throw new ArgumentNullException( "packer" );
 			}
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 			if ( this._handleOrTypeCode == null )
@@ -1158,9 +1167,9 @@ namespace MsgPack
 				throw new ArgumentNullException( "encoding" );
 			}
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 			if ( this.IsNil )
@@ -1173,9 +1182,9 @@ namespace MsgPack
 			try
 			{
 				var asMessagePackString = this._handleOrTypeCode as MessagePackString;
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 				Contract.Assert( asMessagePackString != null );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 				if ( encoding is UTF8Encoding )
 				{
@@ -1209,9 +1218,9 @@ namespace MsgPack
 		public string AsStringUtf16()
 		{
 			VerifyUnderlyingType<byte[]>( this, null );
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 			if ( this.IsNil )
@@ -1222,9 +1231,9 @@ namespace MsgPack
 			try
 			{
 				MessagePackString asMessagePackString = this._handleOrTypeCode as MessagePackString;
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 				Contract.Assert( asMessagePackString != null );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 				if ( asMessagePackString.UnsafeGetString() != null )
 				{
@@ -1243,7 +1252,6 @@ namespace MsgPack
 					throw new InvalidOperationException( "Not UTF-16 string." );
 				}
 
-				// ReSharper disable RedundantIfElseBlock
 				if ( asBytes[ 0 ] == 0xff && asBytes[ 1 ] == 0xfe )
 				{
 					return Encoding.Unicode.GetString( asBytes, 2, asBytes.Length - 2 );
@@ -1256,7 +1264,6 @@ namespace MsgPack
 				{
 					return Encoding.BigEndianUnicode.GetString( asBytes, 0, asBytes.Length );
 				}
-				// ReSharper restore RedundantIfElseBlock
 			}
 			catch ( ArgumentException ex )
 			{
@@ -1343,7 +1350,6 @@ namespace MsgPack
 				{
 					throw new ArgumentException( String.Format( CultureInfo.CurrentCulture, "Do not convert nil MessagePackObject to {0}.", typeof( T ) ), parameterName );
 				}
-				// ReSharper disable once RedundantIfElseBlock
 				else
 				{
 					ThrowCannotBeNilAs<T>();
@@ -1356,7 +1362,6 @@ namespace MsgPack
 				{
 					throw new ArgumentException( String.Format( CultureInfo.CurrentCulture, "Do not convert {0} MessagePackObject to {1}.", instance.UnderlyingType, typeof( T ) ), parameterName );
 				}
-				// ReSharper disable once RedundantIfElseBlock
 				else
 				{
 					ThrowInvalidTypeAs<T>( instance );
@@ -1375,7 +1380,6 @@ namespace MsgPack
 			{
 				throw new InvalidOperationException( String.Format( CultureInfo.CurrentCulture, "Do not convert {0} (binary:0x{2:x}) MessagePackObject to {1}.", instance.UnderlyingType, typeof( T ), instance._value ) );
 			}
-			// ReSharper disable once RedundantIfElseBlock
 			else
 			{
 				throw new InvalidOperationException( String.Format( CultureInfo.CurrentCulture, "Do not convert {0} MessagePackObject to {1}.", instance.UnderlyingType, typeof( T ) ) );
@@ -1404,7 +1408,6 @@ namespace MsgPack
 
 			// Nullable<T> is boxed as null or underlying value type, 
 			// so ( obj is Nullable<T> ) is always false.
-			// ReSharper disable RedundantIfElseBlock
 			if ( boxedValue == null )
 			{
 				return Nil;
@@ -1493,7 +1496,6 @@ namespace MsgPack
 			{
 				return new MessagePackObject( ( MessagePackExtendedTypeObject )boxedValue );
 			}
-			// ReSharper restore RedundantIfElseBlock
 
 			throw new MessageTypeException( String.Format( CultureInfo.CurrentCulture, "Type '{0}' is not supported.", boxedValue.GetType() ) );
 		}
@@ -1542,9 +1544,9 @@ namespace MsgPack
 					return MessagePackExtendedTypeObject.Unpack( unchecked( ( byte ) this._value ), asExtendedTypeObject );
 				}
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 				Contract.Assert( false, "Unknwon type:" + this._handleOrTypeCode );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 				return null;
 			}
 			else
@@ -1597,9 +1599,9 @@ namespace MsgPack
 					}
 					default:
 					{
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 						Contract.Assert( false, "Unknwon type code:" + asType.TypeCode );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 						// ReSharper disable once HeuristicUnreachableCode
 						return null;
 					}

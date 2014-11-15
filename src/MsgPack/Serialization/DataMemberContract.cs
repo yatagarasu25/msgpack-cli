@@ -18,10 +18,14 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 using System.Diagnostics.Contracts;
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -31,7 +35,11 @@ namespace MsgPack.Serialization
 	/// <summary>
 	///		Represents member's data contract.
 	/// </summary>
+#if !UNITY
 	internal struct DataMemberContract
+#else
+	internal sealed class DataMemberContract
+#endif // !UNITY
 	{
 		internal const int UnspecifiedId = -1;
 
@@ -47,9 +55,9 @@ namespace MsgPack.Serialization
 		{
 			get
 			{
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 				Contract.Ensures( !String.IsNullOrEmpty( Contract.Result<string>() ) );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 				return this._name;
 			}
@@ -67,9 +75,9 @@ namespace MsgPack.Serialization
 		{
 			get
 			{
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 				Contract.Ensures( Contract.Result<int>() >= -1 );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 				return this._id;
 			}
@@ -88,15 +96,24 @@ namespace MsgPack.Serialization
 			get { return this._nilImplication; }
 		}
 
+#if UNITY
+		public DataMemberContract()
+		{
+			this._name = null;
+			this._nilImplication = NilImplication.MemberDefault;
+			this._id = UnspecifiedId;
+		}
+#endif // UNITY
+
 		/// <summary>
 		///		Initializes a new instance of the <see cref="DataMemberContract"/> struct.
 		/// </summary>
 		/// <param name="member">The target member.</param>
 		public DataMemberContract( MemberInfo member )
 		{
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.Requires( member != null );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 			this._name = member.Name;
 			this._nilImplication = NilImplication.MemberDefault;
@@ -112,9 +129,9 @@ namespace MsgPack.Serialization
 		/// <param name="id">The ID of the member. This value cannot be negative and must be unique in the type.</param>
 		public DataMemberContract( MemberInfo member, string name, NilImplication nilImplication, int? id )
 		{
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.Requires( member != null );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 			if ( id < 0 )
 			{
@@ -133,17 +150,17 @@ namespace MsgPack.Serialization
 		/// <param name="attribute">The MessagePack member attribute.</param>
 		public DataMemberContract( MemberInfo member, MessagePackMemberAttribute attribute )
 		{
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.Requires( member != null );
 			Contract.Requires( attribute != null );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 			if ( attribute.Id < 0 )
 			{
 				throw new SerializationException( String.Format( CultureInfo.CurrentCulture, "The member ID cannot be negative. The member is '{0}' in the '{1}' type.", member.Name, member.DeclaringType ) );
 			}
 
-			this._name = member.Name;
+			this._name = String.IsNullOrEmpty( attribute.Name ) ? member.Name : attribute.Name;
 			this._nilImplication = attribute.NilImplication;
 			this._id = attribute.Id;
 		}

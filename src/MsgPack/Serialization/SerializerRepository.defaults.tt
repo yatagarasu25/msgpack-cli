@@ -179,6 +179,11 @@ var __notInSLs =
 		typeof( System.Collections.Specialized.NameValueCollection ),
 		typeof( System.Runtime.InteropServices.ComTypes.FILETIME ),
 	};
+var __inWinRTs =
+	new HashSet<Type>()
+	{
+		typeof( System.Runtime.InteropServices.ComTypes.FILETIME ),
+	};
 var __notInWPs =
 	new HashSet<Type>()
 	{
@@ -206,14 +211,18 @@ var __notInWPs =
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
-#if !WINDOWS_PHONE && !NETFX_35 && !UNITY_ANDROID && !UNITY_IPHONE
+#if !WINDOWS_PHONE && !NETFX_35 && !UNITY
 using System.Numerics;
-#endif // !WINDOWS_PHONE && !NETFX_35 && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !WINDOWS_PHONE && !NETFX_35 && !UNITY
 using System.Reflection;
 using System.Text;
 
@@ -226,6 +235,7 @@ namespace MsgPack.Serialization
 
 	partial class <#= __typeName #> 
 	{
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "This API is naturally coupled with many types" )]
 		internal static Dictionary<RuntimeTypeHandle, object> InitializeDefaultTable( SerializationContext ownerContext )
 		{
 			var dictionary = new Dictionary<RuntimeTypeHandle, object>( <#= __structTypes.Length + __classTypes.Length + __tuples.Length + 9 #> );
@@ -255,15 +265,24 @@ foreach( Type __type in __structTypes )
 
 	if( __notInSLs.Contains( __type ) )
 	{
+		if(__inWinRTs.Contains( __type ) )
+		{
+#>
+#if !SILVERLIGHT
+<#
+		}
+		else
+		{
 #>
 #if !SILVERLIGHT && !NETFX_CORE
 <#
+		}
 	}
 
 	if( __notInNet35s.Contains( __type ) )
 	{
 #>
-#if !NETFX_35 && !UNITY_ANDROID && !UNITY_IPHONE
+#if !NETFX_35 && !UNITY
 <#
 	}
 #>
@@ -273,15 +292,24 @@ foreach( Type __type in __structTypes )
 	if( __notInNet35s.Contains( __type ) )
 	{
 #>
-#endif // !NETFX_35 && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !NETFX_35 && !UNITY
 <#
 	}
 
 	if( __notInSLs.Contains( __type ) )
 	{
+		if(__inWinRTs.Contains( __type ) )
+		{
+#>
+#endif // !SILVERLIGHT
+<#
+		}
+		else
+		{
 #>
 #endif // !SILVERLIGHT && !NETFX_CORE
 <#
+		}
 	}
 
 	if( __notInWPs.Contains( __type ) )
@@ -303,22 +331,24 @@ foreach( Type __type in __classTypes )
 
 	if( __notInSLs.Contains( __type ) )
 	{
-#>
-#if !SILVERLIGHT && !NETFX_CORE
-<#
-	}
-
-	if( __notInSLs.Contains( __type ) )
-	{
+		if(__inWinRTs.Contains( __type ) )
+		{
 #>
 #if !SILVERLIGHT
 <#
+		}
+		else
+		{
+#>
+#if !SILVERLIGHT && !NETFX_CORE
+<#
+		}
 	}
 
 	if( __notInNet35s.Contains( __type ) )
 	{
 #>
-#if !NETFX_35 && !UNITY_ANDROID && !UNITY_IPHONE
+#if !NETFX_35 && !UNITY
 <#
 	}
 	
@@ -338,22 +368,24 @@ foreach( Type __type in __classTypes )
 	if( __notInNet35s.Contains( __type ) )
 	{
 #>
-#endif // !NETFX_35 && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !NETFX_35 && !UNITY
 <#
 	}
 
 	if( __notInSLs.Contains( __type ) )
 	{
+		if(__inWinRTs.Contains( __type ) )
+		{
 #>
 #endif // !SILVERLIGHT
 <#
-	}
-
-	if( __notInSLs.Contains( __type ) )
-	{
+		}
+		else
+		{
 #>
 #endif // !SILVERLIGHT && !NETFX_CORE
 <#
+		}
 	}
 
 	if( __notInWPs.Contains( __type ) )

@@ -312,7 +312,6 @@ namespace MsgPack.Serialization.AbstractSerializers
 		/// <returns>The generated construct.</returns>
 		private TConstruct EmitGetMemberValueExpression( TContext context, TConstruct instance, MemberInfo member )
 		{
-			// ReSharper disable RedundantIfElseBlock
 			FieldInfo asField;
 			if ( ( asField = member as FieldInfo ) != null )
 			{
@@ -326,7 +325,6 @@ namespace MsgPack.Serialization.AbstractSerializers
 #endif
 				return this.EmitGetProperty( context, instance, asProperty, !asProperty.GetIsPublic() );
 			}
-			// ReSharper restore RedundantIfElseBlock
 		}
 
 		private TConstruct EmitGetProperty( TContext context, TConstruct instance, PropertyInfo property, bool withReflection )
@@ -411,7 +409,6 @@ namespace MsgPack.Serialization.AbstractSerializers
 			CollectionTraits traits;
 			FieldInfo asField;
 			PropertyInfo asProperty = null;
-			// ReSharper disable RedundantIfElseBlock
 			if ( ( asField = member as FieldInfo ) != null )
 			{
 				if ( !asField.IsInitOnly && asField.GetIsPublic() )
@@ -437,7 +434,6 @@ namespace MsgPack.Serialization.AbstractSerializers
 				getCollection = this.EmitGetProperty( context, instance, asProperty, asProperty.GetIsPublic() );
 				traits = asProperty.PropertyType.GetCollectionTraits();
 			}
-			// ReSharper restore RedundantIfElseBlock
 
 			// use Add(T) for appendable collection elementType read only member.
 
@@ -492,25 +488,25 @@ namespace MsgPack.Serialization.AbstractSerializers
 										context,
 										current,
 #if !NETFX_CORE
- traits.ElementType == typeof( DictionaryEntry )
+									traits.ElementType == typeof( DictionaryEntry )
 										? Metadata._DictionaryEntry.Key
 										: traits.ElementType.GetProperty( "Key" )
 #else
 										traits.ElementType.GetProperty( "Key" )
-#endif
- ),
+#endif // !NETFX_CORE
+									),
 									valueType,
 									this.EmitGetPropretyExpression(
 										context,
 										current,
 #if !NETFX_CORE
- traits.ElementType == typeof( DictionaryEntry )
+									traits.ElementType == typeof( DictionaryEntry )
 										? Metadata._DictionaryEntry.Value
 										: traits.ElementType.GetProperty( "Value" )
 #else
 										traits.ElementType.GetProperty( "Value" )
-#endif
- ),
+#endif // !NETFX_CORE
+									),
 									false
 								)
 						// ReSharper restore ImplicitlyCapturedClosure
@@ -1358,7 +1354,6 @@ namespace MsgPack.Serialization.AbstractSerializers
 		{
 			if ( traits.AddMethod == null )
 			{
-				// ReSharper disable RedundantIfElseBlock
 				if ( member != null )
 				{
 					throw new SerializationException(
@@ -1380,7 +1375,6 @@ namespace MsgPack.Serialization.AbstractSerializers
 						)
 					);
 				}
-				// ReSharper restore RedundantIfElseBlock
 			}
 
 			return

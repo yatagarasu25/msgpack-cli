@@ -18,10 +18,14 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 using System.Diagnostics.Contracts;
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 namespace MsgPack.Serialization
 {
@@ -44,6 +48,20 @@ namespace MsgPack.Serialization
 			get { return this._id; }
 		}
 
+		private string _name;
+
+		/// <summary>
+		///		Gets or sets the name of this member.
+		/// </summary>
+		/// <value>
+		///		The name which will be used in map key on serialized MessagePack stream.
+		/// </value>
+		public string Name
+		{
+			get { return this._name; }
+			set { this._name = value; }
+		}
+
 		private NilImplication _nilImplication;
 
 		/// <summary>
@@ -57,9 +75,9 @@ namespace MsgPack.Serialization
 		{
 			get
 			{
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 				Contract.Ensures( Enum.IsDefined( typeof( NilImplication ), Contract.Result<NilImplication>() ) );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 				return this._nilImplication;
 			}
@@ -79,9 +97,9 @@ namespace MsgPack.Serialization
 					}
 				}
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 				Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 				this._nilImplication = value;

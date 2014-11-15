@@ -28,6 +28,10 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.ComponentModel;
 
@@ -76,13 +80,14 @@ namespace MsgPack.Serialization
 		if ( notCls.Contains( type ) )
 		{
 #>
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 		[CLSCompliant( false )]
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 <#
 		}
 #>
 		[EditorBrowsable( EditorBrowsableState.Never )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
 		public static <#= type.Name #> Unpack<#= type.Name #>Value( Unpacker unpacker, Type objectType, String memberName )
 		{
 			try
@@ -115,13 +120,14 @@ namespace MsgPack.Serialization
 		if ( notCls.Contains( type ) )
 		{
 #>
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 		[CLSCompliant( false )]
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 <#
 		}
 #>
 		[EditorBrowsable( EditorBrowsableState.Never )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
 		public static <#= type.Name #>? UnpackNullable<#= type.Name #>Value( Unpacker unpacker, Type objectType, String memberName )
 		{
 			try
@@ -155,6 +161,7 @@ namespace MsgPack.Serialization
 		///		Failed to unpack string type value from underlying stream.
 		/// </exception>
 		[EditorBrowsable( EditorBrowsableState.Never )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
 		public static string UnpackStringValue( Unpacker unpacker, Type objectType, String memberName )
 		{
 			try
@@ -184,6 +191,7 @@ namespace MsgPack.Serialization
 		///		Failed to unpack byte array type value from underlying stream.
 		/// </exception>
 		[EditorBrowsable( EditorBrowsableState.Never )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
 		public static byte[] UnpackBinaryValue( Unpacker unpacker, Type objectType, String memberName )
 		{
 			try

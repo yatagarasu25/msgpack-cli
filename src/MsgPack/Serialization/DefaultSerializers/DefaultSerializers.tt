@@ -186,6 +186,10 @@ var __notInWPs =
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
@@ -224,7 +228,7 @@ foreach( Type __type in __types )
 	if ( __notInWPs.Contains( __type ) )
 	{
 #>
-#if !WINDOWS_PHONE && !NETFX_35 && !UNITY_ANDROID && !UNITY_IPHONE
+#if !WINDOWS_PHONE && !NETFX_35 && !UNITY
 <#
 	}
 
@@ -235,6 +239,7 @@ foreach( Type __type in __types )
 		public <#= __typeName #>( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, <#= __type.FullName #> value )
 		{
 <#
@@ -281,6 +286,7 @@ foreach( var ctor in ctors )
 #>
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  <#= __type.FullName #> UnpackFromCore( Unpacker unpacker )
 		{
 <#
@@ -360,7 +366,7 @@ foreach( var ctor in ctors )
 	if ( __notInWPs.Contains( __type ) )
 	{
 #>
-#endif // !WINDOWS_PHONE && !NETFX_35 && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !WINDOWS_PHONE && !NETFX_35 && !UNITY
 <#
 	}
 

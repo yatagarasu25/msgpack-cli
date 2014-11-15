@@ -18,6 +18,10 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -27,21 +31,6 @@ namespace MsgPack.Serialization.DefaultSerializers
 {
 	internal static class ArraySegmentMessageSerializer
 	{
-#if !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
-		public static readonly MethodInfo PackByteArraySegmentToMethod =
-			FromExpression.ToMethod( ( Packer packer, ArraySegment<byte> objectTree, MessagePackSerializer<byte> itemSerializer ) => PackByteArraySegmentTo( packer, objectTree, itemSerializer ) );
-		public static readonly MethodInfo PackCharArraySegmentToMethod =
-			FromExpression.ToMethod( ( Packer packer, ArraySegment<char> objectTree, MessagePackSerializer<char> itemSerializer ) => PackCharArraySegmentTo( packer, objectTree, itemSerializer ) );
-		public static readonly MethodInfo PackGenericArraySegmentTo1Method =
-			typeof( ArraySegmentMessageSerializer ).GetMethod( "PackGenericArraySegmentTo" );
-		public static readonly MethodInfo UnpackByteArraySegmentFromMethod =
-			FromExpression.ToMethod( ( Unpacker unpacker, MessagePackSerializer<byte> itemSerializer ) => UnpackByteArraySegmentFrom( unpacker, itemSerializer ) );
-		public static readonly MethodInfo UnpackCharArraySegmentFromMethod =
-			FromExpression.ToMethod( ( Unpacker unpacker, MessagePackSerializer<char> itemSerializer ) => UnpackCharArraySegmentFrom( unpacker, itemSerializer ) );
-		public static readonly MethodInfo UnpackGenericArraySegmentFrom1Method =
-			typeof( ArraySegmentMessageSerializer ).GetMethod( "UnpackGenericArraySegmentFrom" );
-#endif // !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
-
 		[SuppressMessage( "Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "itemSerializer", Justification = "For Delegate signature compatibility" )]
 		public static void PackByteArraySegmentTo( Packer packer, ArraySegment<byte> objectTree, MessagePackSerializer<byte> itemSerializer )
 		{

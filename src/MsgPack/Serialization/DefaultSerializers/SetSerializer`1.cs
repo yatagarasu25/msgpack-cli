@@ -18,12 +18,16 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.Collections.Generic;
 
 namespace MsgPack.Serialization.DefaultSerializers
 {
-#if !NETFX_35 && !UNITY_ANDROID && !UNITY_IPHONE
+#if !NETFX_35 && !UNITY
 	/// <summary>
 	///		Set interface serializer.
 	/// </summary>
@@ -33,6 +37,8 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public SetSerializer( SerializationContext ownerContext, Type targetType )
 			: base( ownerContext, targetType ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "1", Justification = "Asserted internally" )]
 		protected override void PackArrayHeader( Packer packer, ISet<T> objectTree )
 		{
 			packer.PackArrayHeader( objectTree.Count );
@@ -43,10 +49,11 @@ namespace MsgPack.Serialization.DefaultSerializers
 			this.UnpackToCore( unpacker, collection, UnpackHelpers.GetItemsCount( unpacker ) );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
 		protected override void AddItem( ISet<T> collection, T item )
 		{
 			collection.Add( item );
 		}
 	}
-#endif // !NETFX_35 && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !NETFX_35 && !UNITY
 }

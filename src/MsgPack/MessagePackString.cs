@@ -18,11 +18,15 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.Diagnostics;
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 using System.Diagnostics.Contracts;
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 using System.Globalization;
 using System.Linq;
 using System.Security;
@@ -38,17 +42,22 @@ namespace MsgPack
 #if !SILVERLIGHT && !NETFX_CORE
 	[Serializable]
 #endif // if !SILVERLIGHT && !NETFX_CORE
+#if !NETFX_35 && !UNITY
+	[SecuritySafeCritical]
+#endif // !NETFX_35 && !UNITY
 	[DebuggerDisplay( "{DebuggerDisplayString}" )]
 	[DebuggerTypeProxy( typeof( MessagePackStringDebuggerProxy ) )]
 	internal sealed class MessagePackString
 	{
 		// TODO: CLOB support?
+		private static readonly DecoderFallbackException IsBinary = new DecoderFallbackException();
 		private byte[] _encoded;
 		private string _decoded;
 		private DecoderFallbackException _decodingError;
 		private BinaryType _type;
 
 		// ReSharper disable once UnusedMember.Local
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "For debugger" )]
 		private string DebuggerDisplayString
 		{
 			get { return new MessagePackStringDebuggerProxy( this ).Value; }
@@ -56,19 +65,24 @@ namespace MsgPack
 
 		public MessagePackString( string decoded )
 		{
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.Assert( decoded != null );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 			this._decoded = decoded;
 			this._type = BinaryType.String;
 		}
 
-		public MessagePackString( byte[] encoded )
+		public MessagePackString( byte[] encoded, bool isBinary )
 		{
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.Assert( encoded != null );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 			this._encoded = encoded;
+			this._type = isBinary ? BinaryType.Blob : BinaryType.Unknwon;
+			if ( isBinary )
+			{
+				this._decodingError = IsBinary;
+			}
 		}
 
 		// Copy constructor for debugger proxy
@@ -135,7 +149,7 @@ namespace MsgPack
 			this.DecodeIfNeeded();
 			if ( this._decodingError != null )
 			{
-				throw new InvalidOperationException( "This bytes is not UTF-8 string.", this._decodingError );
+				throw new InvalidOperationException( "This bytes is not UTF-8 string.", this._decodingError == IsBinary ? default( Exception ) : this._decodingError );
 			}
 
 			return this._decoded;
@@ -249,7 +263,7 @@ namespace MsgPack
 				return false;
 			}
 
-#if !WINDOWS_PHONE && !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY && !WINDOWS_PHONE
 			if ( _isFastEqualsDisabled == 0 )
 			{
 				try
@@ -265,7 +279,7 @@ namespace MsgPack
 					Interlocked.Exchange( ref _isFastEqualsDisabled, 1 );
 				}
 			}
-#endif // if !WINDOWS_PHONE && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // if !UNITY && !WINDOWS_PHONE
 
 			return SlowEquals( left._encoded, right._encoded );
 		}
@@ -283,7 +297,7 @@ namespace MsgPack
 			return true;
 		}
 
-#if !WINDOWS_PHONE && !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY && !WINDOWS_PHONE
 #if SILVERLIGHT
 		private static int _isFastEqualsDisabled =
 			System.Windows.Application.Current.HasElevatedPermissions ? 0 : 1;
@@ -291,12 +305,17 @@ namespace MsgPack
 		private static int _isFastEqualsDisabled;
 #endif // if SILVERLIGHT
 
+#if DEBUG
+		// for testing
 		internal static bool IsFastEqualsDisabled
 		{
 			get { return _isFastEqualsDisabled != 0; }
 		}
+#endif
 
+#if !NETFX_35 && !UNITY
 		[SecuritySafeCritical]
+#endif // !NETFX_35 && !UNITY
 		private static bool UnsafeFastEquals( byte[] x, byte[] y )
 		{
 #if DEBUG
@@ -314,7 +333,7 @@ namespace MsgPack
 
 			return result == 0;
 		}
-#endif // if !WINDOWS_PHONE && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // if !UNITY && !WINDOWS_PHONE
 
 #if !SILVERLIGHT && !NETFX_CORE
 		[Serializable]
@@ -394,7 +413,6 @@ namespace MsgPack
 					{
 						return false;
 					}
-					// ReSharper disable once RedundantIfElseBlock
 					else if ( 0x7E < c && c < 0xA0 )
 					{
 						return false;

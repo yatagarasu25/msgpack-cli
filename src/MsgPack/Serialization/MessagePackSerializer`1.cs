@@ -18,6 +18,10 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.Globalization;
 using System.IO;
@@ -46,11 +50,11 @@ namespace MsgPack.Serialization
 		// ReSharper disable once StaticFieldInGenericType
 		private static readonly bool _isNullable = JudgeNullable();
 
-#if !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
+#if !XAMIOS && !XAMDROID && !UNITY
 		// This field exists for each closed generic types.
 		internal static readonly MethodInfo UnpackToCoreMethod =
 			FromExpression.ToMethod( ( MessagePackSerializer<T> @this, Unpacker unpacker, T collection ) => @this.UnpackToCore( unpacker, collection ) );
-#endif // !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !XAMIOS && !XAMDROID && !UNITY
 
 		private readonly PackerCompatibilityOptions? _packerCompatibilityOptionsForCompatibility;
 
@@ -266,7 +270,6 @@ namespace MsgPack.Serialization
 					// null
 					return default( T );
 				}
-				// ReSharper disable once RedundantIfElseBlock
 				else
 				{
 					throw SerializationExceptions.NewValueTypeCannotBeNull( typeof( T ) );
@@ -431,7 +434,6 @@ namespace MsgPack.Serialization
 				packer.PackNull();
 				return;
 			}
-			// ReSharper disable once RedundantIfElseBlock
 			else
 			{
 				if ( !( objectTree is T ) )
@@ -471,8 +473,9 @@ namespace MsgPack.Serialization
 
 		byte[] IMessagePackSingleObjectSerializer.PackSingleObject( object objectTree )
 		{
-			if ( ( typeof( T ).GetIsValueType() && !( objectTree is T ) )
-				|| ( ( objectTree != null && !( objectTree is T ) ) ) )
+			var isT = objectTree is T;
+			if ( ( typeof( T ).GetIsValueType() && !isT )
+				|| ( ( objectTree != null && !isT ) ) )
 			{
 				throw new ArgumentException( String.Format( CultureInfo.CurrentCulture, "'{0}' is not compatible for '{1}'.", objectTree == null ? "(null)" : objectTree.GetType().FullName, typeof( T ) ), "objectTree" );
 			}

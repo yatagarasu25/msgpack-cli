@@ -29,31 +29,35 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Security;
 using MsgPack.Serialization.AbstractSerializers;
 
 namespace MsgPack.Serialization.CodeDomSerializers
 {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "CodeDOM" )]
 	internal class CodeDomSerializerBuilder<TObject> : SerializerBuilder<CodeDomContext, CodeDomConstruct, TObject>
 	{
 		public CodeDomSerializerBuilder() { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
 		protected override void EmitMethodPrologue( CodeDomContext context, SerializerMethod method )
 		{
 			context.ResetMethodContext();
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
 		protected override void EmitMethodPrologue( CodeDomContext context, EnumSerializerMethod method )
 		{
 			context.ResetMethodContext();
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
 		protected override void EmitMethodEpilogue( CodeDomContext context, SerializerMethod method, CodeDomConstruct construct )
 		{
 			if ( construct == null )
 			{
 				return;
 			}
-
 			CodeMemberMethod codeMethod;
 			switch ( method )
 			{
@@ -63,9 +67,6 @@ namespace MsgPack.Serialization.CodeDomSerializers
 						new CodeMemberMethod
 						{
 							Name = "PackToCore",
-							// ReSharper disable BitwiseOperatorOnEnumWithoutFlags
-							Attributes = MemberAttributes.Family | MemberAttributes.Override
-							// ReSharper restore BitwiseOperatorOnEnumWithoutFlags
 						};
 					codeMethod.Parameters.Add( context.Packer.AsParameter() );
 					codeMethod.Parameters.Add( context.PackToTarget.AsParameter() );
@@ -78,9 +79,6 @@ namespace MsgPack.Serialization.CodeDomSerializers
 						new CodeMemberMethod
 						{
 							Name = "UnpackFromCore",
-							// ReSharper disable BitwiseOperatorOnEnumWithoutFlags
-							Attributes = MemberAttributes.Family | MemberAttributes.Override,
-							// ReSharper restore BitwiseOperatorOnEnumWithoutFlags
 							ReturnType = new CodeTypeReference( typeof( TObject ) )
 						};
 					codeMethod.Parameters.Add( context.Unpacker.AsParameter() );
@@ -93,9 +91,6 @@ namespace MsgPack.Serialization.CodeDomSerializers
 						new CodeMemberMethod
 						{
 							Name = "UnpackToCore",
-							// ReSharper disable BitwiseOperatorOnEnumWithoutFlags
-							Attributes = MemberAttributes.Family | MemberAttributes.Override
-							// ReSharper restore BitwiseOperatorOnEnumWithoutFlags
 						};
 					codeMethod.Parameters.Add( context.Unpacker.AsParameter() );
 					codeMethod.Parameters.Add( context.UnpackToTarget.AsParameter() );
@@ -109,12 +104,14 @@ namespace MsgPack.Serialization.CodeDomSerializers
 			}
 
 			// ReSharper disable BitwiseOperatorOnEnumWithoutFlags
-			codeMethod.Attributes = MemberAttributes.Family | MemberAttributes.Override;
+			codeMethod.Attributes = ( context.IsInternalToMsgPackLibrary ? MemberAttributes.FamilyOrAssembly : MemberAttributes.Family ) | MemberAttributes.Override;
 			// ReSharper restore BitwiseOperatorOnEnumWithoutFlags
 			codeMethod.Statements.AddRange( construct.AsStatements().ToArray() );
 
 			context.DeclaringType.Members.Add( codeMethod );
 		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
 		protected override void EmitMethodEpilogue( CodeDomContext context, EnumSerializerMethod method, CodeDomConstruct construct )
 		{
 			if ( construct == null )
@@ -131,9 +128,6 @@ namespace MsgPack.Serialization.CodeDomSerializers
 						new CodeMemberMethod
 						{
 							Name = "PackUnderlyingValueTo",
-							// ReSharper disable BitwiseOperatorOnEnumWithoutFlags
-							Attributes = MemberAttributes.Family | MemberAttributes.Override
-							// ReSharper restore BitwiseOperatorOnEnumWithoutFlags
 						};
 					codeMethod.Parameters.Add( context.Packer.AsParameter() );
 					codeMethod.Parameters.Add( new CodeParameterDeclarationExpression( typeof( TObject ), "enumValue" ) );
@@ -146,9 +140,6 @@ namespace MsgPack.Serialization.CodeDomSerializers
 						new CodeMemberMethod
 						{
 							Name = "UnpackFromUnderlyingValue",
-							// ReSharper disable BitwiseOperatorOnEnumWithoutFlags
-							Attributes = MemberAttributes.Family | MemberAttributes.Override,
-							// ReSharper restore BitwiseOperatorOnEnumWithoutFlags
 							ReturnType = new CodeTypeReference( typeof( TObject ) )
 						};
 					codeMethod.Parameters.Add( new CodeParameterDeclarationExpression( typeof( MessagePackObject ), "messagePackObject" ) );
@@ -162,7 +153,7 @@ namespace MsgPack.Serialization.CodeDomSerializers
 			}
 
 			// ReSharper disable BitwiseOperatorOnEnumWithoutFlags
-			codeMethod.Attributes = MemberAttributes.Family | MemberAttributes.Override;
+			codeMethod.Attributes = ( context.IsInternalToMsgPackLibrary ? MemberAttributes.FamilyOrAssembly : MemberAttributes.Family ) | MemberAttributes.Override;
 			// ReSharper restore BitwiseOperatorOnEnumWithoutFlags
 			codeMethod.Statements.AddRange( construct.AsStatements().ToArray() );
 
@@ -199,16 +190,19 @@ namespace MsgPack.Serialization.CodeDomSerializers
 			return CodeDomConstruct.Expression( typeof( MessagePackSerializer<> ).MakeGenericType( typeof( TObject ) ), new CodeThisReferenceExpression() );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitBoxExpression( CodeDomContext context, Type valueType, CodeDomConstruct value )
 		{
 			return CodeDomConstruct.Expression( typeof( object ), new CodeCastExpression( typeof( object ), value.AsExpression() ) );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitUnboxAnyExpression( CodeDomContext context, Type targetType, CodeDomConstruct value )
 		{
 			return CodeDomConstruct.Expression( targetType, new CodeCastExpression( targetType, value.AsExpression() ) );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "1", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitNotExpression( CodeDomContext context, CodeDomConstruct booleanExpression )
 		{
 			return
@@ -222,6 +216,8 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "1", Justification = "Asserted internally" )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitEqualsExpression( CodeDomContext context, CodeDomConstruct left, CodeDomConstruct right )
 		{
 			return
@@ -235,6 +231,8 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "1", Justification = "Asserted internally" )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitGreaterThanExpression( CodeDomContext context, CodeDomConstruct left, CodeDomConstruct right )
 		{
 			return
@@ -248,6 +246,8 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "1", Justification = "Asserted internally" )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitLessThanExpression( CodeDomContext context, CodeDomConstruct left, CodeDomConstruct right )
 		{
 			return
@@ -261,6 +261,7 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "1", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitIncrement( CodeDomContext context, CodeDomConstruct int32Value )
 		{
 			return
@@ -281,6 +282,7 @@ namespace MsgPack.Serialization.CodeDomSerializers
 			return CodeDomConstruct.Expression( typeof( Type ), new CodeTypeOfExpression( type ) );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitFieldOfExpression( CodeDomContext context, FieldInfo field )
 		{
 			return
@@ -295,6 +297,7 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitMethodOfExpression( CodeDomContext context, MethodBase method )
 		{
 			return
@@ -318,6 +321,7 @@ namespace MsgPack.Serialization.CodeDomSerializers
 			return CodeDomConstruct.Statement( statements.SelectMany( s => s.AsStatements() ) );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct DeclareLocal( CodeDomContext context, Type type, string name )
 		{
 #if DEBUG
@@ -334,6 +338,7 @@ namespace MsgPack.Serialization.CodeDomSerializers
 			return CodeDomConstruct.Parameter( type, name );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitCreateNewObjectExpression( CodeDomContext context, CodeDomConstruct variable, ConstructorInfo constructor, params CodeDomConstruct[] arguments )
 		{
 #if DEBUG
@@ -347,6 +352,7 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitInvokeVoidMethod( CodeDomContext context, CodeDomConstruct instance, MethodInfo method, params CodeDomConstruct[] arguments )
 		{
 #if DEBUG
@@ -369,6 +375,7 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitInvokeMethodExpression( CodeDomContext context, CodeDomConstruct instance, MethodInfo method, IEnumerable<CodeDomConstruct> arguments )
 		{
 #if DEBUG
@@ -390,6 +397,7 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitGetPropretyExpression( CodeDomContext context, CodeDomConstruct instance, PropertyInfo property )
 		{
 #if DEBUG
@@ -408,6 +416,7 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitGetFieldExpression( CodeDomContext context, CodeDomConstruct instance, FieldInfo field )
 		{
 #if DEBUG
@@ -426,6 +435,8 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "3", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitSetProprety( CodeDomContext context, CodeDomConstruct instance, PropertyInfo property, CodeDomConstruct value )
 		{
 #if DEBUG
@@ -447,6 +458,8 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "3", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitSetField( CodeDomContext context, CodeDomConstruct instance, FieldInfo field, CodeDomConstruct value )
 		{
 #if DEBUG
@@ -468,11 +481,14 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "1", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitLoadVariableExpression( CodeDomContext context, CodeDomConstruct variable )
 		{
 			return CodeDomConstruct.Expression( variable.ContextType, variable.AsExpression() );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "1", Justification = "Asserted internally" )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitStoreVariableStatement( CodeDomContext context, CodeDomConstruct variable, CodeDomConstruct value )
 		{
 #if DEBUG
@@ -488,6 +504,7 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitThrowExpression( CodeDomContext context, Type expressionType, CodeDomConstruct exceptionExpression )
 		{
 #if DEBUG
@@ -496,6 +513,8 @@ namespace MsgPack.Serialization.CodeDomSerializers
 			return CodeDomConstruct.Statement( new CodeThrowExceptionStatement( exceptionExpression.AsExpression() ) );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "1", Justification = "Asserted internally" )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitTryFinally( CodeDomContext context, CodeDomConstruct tryStatement, CodeDomConstruct finallyStatement )
 		{
 #if DEBUG
@@ -512,6 +531,7 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "1", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitCreateNewArrayExpression( CodeDomContext context, Type elementType, int length, IEnumerable<CodeDomConstruct> initialElements )
 		{
 #if DEBUG
@@ -531,6 +551,7 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitGetSerializerExpression( CodeDomContext context, Type targetType, SerializingMember? memberInfo )
 		{
 			return
@@ -548,6 +569,8 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "1", Justification = "Asserted internally" )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitConditionalExpression( CodeDomContext context, CodeDomConstruct conditionExpression, CodeDomConstruct thenExpression, CodeDomConstruct elseExpression )
 		{
 #if DEBUG
@@ -595,6 +618,8 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "3", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitAndConditionalExpression( CodeDomContext context, IList<CodeDomConstruct> conditionExpressions, CodeDomConstruct thenExpression, CodeDomConstruct elseExpression )
 		{
 #if DEBUG
@@ -645,6 +670,7 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "1", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitRetrunStatement( CodeDomContext context, CodeDomConstruct expression )
 		{
 #if DEBUG
@@ -656,6 +682,9 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "1", Justification = "Asserted internally" )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitForLoop( CodeDomContext context, CodeDomConstruct count, Func<ForLoopContext, CodeDomConstruct> loopBodyEmitter )
 		{
 #if DEBUG
@@ -689,6 +718,10 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "Asserted internally" )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "1", Justification = "Asserted internally" )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "3", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitForEachLoop( CodeDomContext context, CollectionTraits collectionTraits, CodeDomConstruct collection, Func<CodeDomConstruct, CodeDomConstruct> loopBodyEmitter )
 		{
 #if DEBUG
@@ -776,6 +809,7 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitEnumFromUnderlyingCastExpression(
 			CodeDomContext context,
 			Type enumType,
@@ -784,6 +818,7 @@ namespace MsgPack.Serialization.CodeDomSerializers
 			return CodeDomConstruct.Expression( enumType, new CodeCastExpression( enumType, underlyingValue.AsExpression() ) );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "2", Justification = "Asserted internally" )]
 		protected override CodeDomConstruct EmitEnumToUnderlyingCastExpression(
 			CodeDomContext context,
 			Type underlyingType,
@@ -806,13 +841,13 @@ namespace MsgPack.Serialization.CodeDomSerializers
 			asCodeDomContext.Reset( typeof( TObject ) );
 
 			this.BuildSerializer( asCodeDomContext );
-			this.Finish( asCodeDomContext, typeof( TObject ).GetIsEnum() );
+			Finish( asCodeDomContext, typeof( TObject ).GetIsEnum() );
 		}
 
 		protected override Func<SerializationContext, MessagePackSerializer<TObject>> CreateSerializerConstructor( CodeDomContext codeGenerationContext )
 		{
-			this.Finish( codeGenerationContext, false );
-			var targetType = this.PrepareSerializerConstructorCreation( codeGenerationContext );
+			Finish( codeGenerationContext, false );
+			var targetType = PrepareSerializerConstructorCreation( codeGenerationContext );
 
 			var contextParameter = Expression.Parameter( typeof( SerializationContext ), "context" );
 			return
@@ -824,8 +859,8 @@ namespace MsgPack.Serialization.CodeDomSerializers
 
 		protected override Func<SerializationContext, MessagePackSerializer<TObject>> CreateEnumSerializerConstructor( CodeDomContext codeGenerationContext )
 		{
-			this.Finish( codeGenerationContext, true );
-			var targetType = this.PrepareSerializerConstructorCreation( codeGenerationContext );
+			Finish( codeGenerationContext, true );
+			var targetType = PrepareSerializerConstructorCreation( codeGenerationContext );
 
 			var contextParameter = Expression.Parameter( typeof( SerializationContext ), "context" );
 			return
@@ -835,7 +870,10 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				).Compile();
 		}
 
-		private Type PrepareSerializerConstructorCreation( CodeDomContext codeGenerationContext )
+#if !NETFX_35
+		[SecuritySafeCritical]
+#endif // !NETFX_35
+		private static Type PrepareSerializerConstructorCreation( CodeDomContext codeGenerationContext )
 		{
 			if ( !SerializerDebugging.OnTheFlyCodeDomEnabled )
 			{
@@ -843,38 +881,47 @@ namespace MsgPack.Serialization.CodeDomSerializers
 			}
 
 			var cu = codeGenerationContext.CreateCodeCompileUnit();
-			var codeProvider = CodeDomProvider.CreateProvider( "cs" );
-			if ( SerializerDebugging.DumpEnabled )
+			CompilerResults cr;
+			using ( var codeProvider = CodeDomProvider.CreateProvider( "cs" ) )
 			{
-				SerializerDebugging.TraceEvent( "Compile {0}", codeGenerationContext.DeclaringType.Name );
-				codeProvider.GenerateCodeFromCompileUnit( cu, SerializerDebugging.ILTraceWriter, new CodeGeneratorOptions() );
-				SerializerDebugging.FlushTraceData();
-			}
-
-			var cr =
-				codeProvider.CompileAssemblyFromDom(
-					new CompilerParameters( SerializerDebugging.CodeDomSerializerDependentAssemblies.ToArray() ),
-					cu
-				);
-			var errors = cr.Errors.OfType<CompilerError>().Where( e => !e.IsWarning ).ToArray();
-			if ( errors.Length > 0 )
-			{
-				if ( SerializerDebugging.TraceEnabled )
+				if ( SerializerDebugging.DumpEnabled )
 				{
+					SerializerDebugging.TraceEvent( "Compile {0}", codeGenerationContext.DeclaringType.Name );
 					codeProvider.GenerateCodeFromCompileUnit( cu, SerializerDebugging.ILTraceWriter, new CodeGeneratorOptions() );
 					SerializerDebugging.FlushTraceData();
 				}
 
-				throw new SerializationException(
-					String.Format(
-						CultureInfo.CurrentCulture,
-						"Failed to compile assembly. Details:{0}{1}",
-						Environment.NewLine,
-						BuildCompilationError( cr )
-					)
-				);
-			}
+				cr =
+					codeProvider.CompileAssemblyFromDom(
+						new CompilerParameters( SerializerDebugging.CodeDomSerializerDependentAssemblies.ToArray() )
+#if PERFORMANCE_TEST
+					{
+						IncludeDebugInformation = false,
+						CompilerOptions = "/optimize+"
+					}
+#endif
+						,
+						cu
+						);
+				var errors = cr.Errors.OfType<CompilerError>().Where( e => !e.IsWarning ).ToArray();
+				if ( errors.Length > 0 )
+				{
+					if ( SerializerDebugging.TraceEnabled )
+					{
+						codeProvider.GenerateCodeFromCompileUnit( cu, SerializerDebugging.ILTraceWriter, new CodeGeneratorOptions() );
+						SerializerDebugging.FlushTraceData();
+					}
 
+					throw new SerializationException(
+						String.Format(
+							CultureInfo.CurrentCulture,
+							"Failed to compile assembly. Details:{0}{1}",
+							Environment.NewLine,
+							BuildCompilationError( cr )
+							)
+						);
+				}
+			}
 #if DEBUG
 			// Check warning except ambigious type reference.
 			var warnings = cr.Errors.OfType<CompilerError>().Where( e => e.ErrorNumber != "CS0436" ).ToArray();
@@ -908,6 +955,7 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				)
 			);
 			return targetType;
+
 		}
 
 		private static string BuildCompilationError( CompilerResults cr )
@@ -933,7 +981,8 @@ namespace MsgPack.Serialization.CodeDomSerializers
 				);
 		}
 
-		private void Finish( CodeDomContext context, bool isEnum )
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "CodeDOM" )]
+		private static void Finish( CodeDomContext context, bool isEnum )
 		{
 			// fields
 			foreach ( var dependentSerializer in context.GetDependentSerializers() )

@@ -11,7 +11,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MsgPack</RootNamespace>
     <AssemblyName>MsgPack.UnitTest.BclExtensions</AssemblyName>
-    <DefaultLanguage>ja-JP</DefaultLanguage>
+    <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>MsgPack.UnitTest.WinRT.BclExtensions_TemporaryKey.pfx</PackageCertificateKeyFile>
@@ -82,7 +82,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;MSTEST</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -147,9 +147,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\MsgPack.WinRT\MsgPack.WinRT.csproj">
-      <Project>{725997ad-f083-485e-bd88-f2a5bf34bee7}</Project>
-      <Name>MsgPack.WinRT</Name>
+    <ProjectReference Include="..\..\src\MsgPack.WinRT.Portable\MsgPack.WinRT.Portable.csproj">
+      <Project>{e2817364-f217-465f-be3b-a5f85e2f8667}</Project>
+      <Name>MsgPack.WinRT.Portable</Name>
     </ProjectReference>
     <ProjectReference Include="..\MsgPack.NUnitPortable\MsgPack.NUnitPortable.csproj">
       <Project>{fc521316-ebcd-4ef1-8235-c976b2a31eb0}</Project>

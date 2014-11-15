@@ -16,10 +16,26 @@ if( $Rebuild )
 
 $buildOptions += '/p:Configuration=Release'
 
+# Unity
+if ( ![IO.Directory]::Exists( ".\MsgPack-CLI" ) )
+{
+	New-Item .\MsgPack-CLI -Type Directory | Out-Null
+}
+else
+{
+	Remove-Item .\MsgPack-CLI\* -Recurse
+}
+
+if ( ![IO.Directory]::Exists( ".\MsgPack-CLI\mpu" ) )
+{
+	New-Item .\MsgPack-CLI\mpu -Type Directory | Out-Null
+}
+
+# build
 &$builder $sln $buildOptions
 &$builder $slnCompat $buildOptions
 
-$winFile = New-Object IO.FileInfo( ".\bin\netcore45\MsgPack.dll" )
+$winFile = New-Object IO.FileInfo( ".\bin\portable-net45+win+wpa81\MsgPack.dll" )
 $xamarinFile = New-Object IO.FileInfo( ".\bin\monotouch\MsgPack.dll" )
 if( ( $winFile.LastWriteTime - $xamarinFile.LastWriteTime ).Days -ne 0 )
 {
@@ -29,3 +45,17 @@ if( ( $winFile.LastWriteTime - $xamarinFile.LastWriteTime ).Days -ne 0 )
 }
 
 .\.nuget\nuget.exe pack $nuspec
+
+Copy-Item .\bin\* .\MsgPack-CLI\ -Recurse -Exclude @("*.vshost.*", "*.pdb")
+Copy-Item .\tools\mpu\bin\* .\MsgPack-CLI\mpu\ -Recurse -Exclude @("*.vshost.*", "*.pdb")
+Remove-Item .\MsgPack-CLI\ -Include *.pdb -Recurse
+[Reflection.Assembly]::LoadWithPartialName( "System.IO.Compression.FileSystem" ) | Out-Null
+# 'latest' should be rewritten with semver manually.
+if ( [IO.File]::Exists( ".\MsgPack.Cli.latest.zip" ) )
+{
+	Remove-Item .\MsgPack.Cli.latest.zip
+}
+[IO.Compression.ZipFile]::CreateFromDirectory( ".\MsgPack-CLI", ".\MsgPack.Cli.latest.zip" )
+Remove-Item .\MsgPack-CLI -Recurse
+
+Write-Host "Package creation finished. Ensure AssemblyInfo.cs is updated and .\SetFileVersions.ps1 was executed."

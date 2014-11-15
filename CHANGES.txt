@@ -136,14 +136,62 @@ Release 0.5 - 2014/7/21
   * This release unifies .NET build and Mono build for main source codes (testing codes have not been unified yet.)
   * This release contains reimplementation of serializer generation stack. It might change implementation detail dependant behavior (it usually potential issue).
 
-Release 0.5.1 2014/8/9
+Release 0.5.1 - 2014/8/9
 
   FEATURES
   * Reflection serializer. It enables on-the-fly serializer generation in Xamarin and Unity3D.
 
   BUG FIXES
-  * Fixes concurrency bug in WinRT.
-  * Fixes built-in NamedValueCollection serializer generates invalid stream when the values of a key are empty.
+  * Fix concurrency bug in WinRT.
+  * Fix built-in NamedValueCollection serializer generates invalid stream when the values of a key are empty.
 
   NOTE
-  * This release changes drop for Unity3D from source assets to dll assets.
+  * This release changes drop for Unity3D from source assets to dll assets (source assets are still available).
+
+Release 0.5.2 - 2014/9/6
+
+  BREAKING CHANGES
+  * MessagePackObjectEqualityComparer does not inherit EqualityComparer<T> now to avoid ExecutionEngineException on iOS.
+
+  FEATURES
+  * Support Windows Phone 8.1 (Both of WinRT & Silverlight) issue #36
+  * Add MessagePackSerializer.Get() for usability.
+
+  BUG FIXES
+  * Fix FILETIME is not available in WinRT
+  * Fix does not work in Unity3D. issue #37
+
+Relase 0.5.3 - 2014/09/15
+
+  BREAKING CHANGES
+  * MessagePackObject from byte[] now always act as binary, not string. It affects only low level API and unpacked from bin8, bin16, bin32 types. Issue #39
+
+  FEATURES
+  * Using new MessagePackMemberAttribute.Name property, you can customize map keys of serialized objects when you use SerializationMethod.Map. Related to issue #38
+
+Release 0.5.4 - 2014/09/22
+
+  FEATURES
+  * Add mpu --internal option for source code form assets in Unity3D.
+
+  BUG FIXES
+  * An -o option of mpu.exe -s does not work.
+  * Same (.NET4.5 + WinRT8 + WP8.1) configured portable project cannot refer MsgPack NuGet package.
+
+  MISCS
+  * Unity drop is now only included in zip file at github release page.
+
+Release 0.5.5 - 2014/10/12
+
+  BUG FIXES
+  * The serializer returned with `MessagePackSerializer.Create<MessagePackObjectDictionary>()` does not deserialize nested element correctly. Issue #42
+  * MessagePackConvert.FromDateTime[Offset] might emit wrong value due to rounding error. Issue #44
+
+  IMPROVEMENTS
+  * Portable library drop for Universal App does not refer `libc` now. Issue #41
+
+Relese 1.0 - ???
+
+  BREAKING CHANGES [planed]
+  * APIs marked with [Obsolete] are removed.
+

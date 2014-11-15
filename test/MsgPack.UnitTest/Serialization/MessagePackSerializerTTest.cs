@@ -24,13 +24,13 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using MsgPack.Serialization.DefaultSerializers;
-#if !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
-#if !NETFX_CORE
+#if !XAMIOS && !XAMDROID && !UNITY
+#if !NETFX_CORE && !SILVERLIGHT
 using MsgPack.Serialization.EmittingSerializers;
 #else
 using MsgPack.Serialization.ExpressionSerializers;
-#endif // !NETFX_CORE
-#endif // !XAMIOS && !XAMDROID && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !NETFX_CORE && !WINDOWS_PHONE
+#endif // !XAMIOS && !XAMDROID && !UNITY
 #if !MSTEST
 using NUnit.Framework;
 #else
@@ -51,7 +51,7 @@ namespace MsgPack.Serialization
 		{
 #if XAMIOS || XAMDROID || UNITY_ANDROID || UNITY_IPHONE
 			return PreGeneratedSerializerActivator.CreateContext( SerializationMethod.Array, SerializationContext.Default.CompatibilityOptions.PackerCompatibilityOptions ).GetSerializer<T>();
-#elif !NETFX_CORE
+#elif !NETFX_CORE && !SILVERLIGHT
 			return new SerializationContext { EmitterFlavor = EmitterFlavor.FieldBased }.GetSerializer<T>();
 #else
 			return new SerializationContext { EmitterFlavor = EmitterFlavor.ExpressionBased }.GetSerializer<T>();
@@ -541,6 +541,29 @@ namespace MsgPack.Serialization
 			}
 		}
 
+		[Test]
+		public void TestIssue41()
+		{
+			using ( var buffer = new MemoryStream( new byte[] { 0x84, 0x01, 0x81, 0x0a, 0x14, 0x02, 0x93, 0x14, 0x1e, 0x28, 0x03, MessagePackCode.NilValue, 0x04, 0x0 } ) )
+			//using ( var unpacker = Unpacker.Create( buffer ) )
+			{
+				//unpacker.Read();
+				var serializer = MessagePackSerializer.Get<MessagePackObjectDictionary>();
+				//var result = serializer.UnpackFrom( unpacker );
+				var result = serializer.Unpack( buffer );
+				Assert.That( result.Count, Is.EqualTo( 4 ) );
+				Assert.That( result[ 1 ].AsDictionary().Count, Is.EqualTo( 1 ) );
+				Assert.That( result[ 1 ].AsDictionary()[ 10 ], Is.EqualTo( ( MessagePackObject )0x14 ) );
+				Assert.That( result[ 2 ].AsList().Count, Is.EqualTo( 3 ) );
+				Assert.That( result[ 2 ].AsList()[ 0 ], Is.EqualTo( ( MessagePackObject )0x14 ) );
+				Assert.That( result[ 2 ].AsList()[ 1 ], Is.EqualTo( ( MessagePackObject )0x1E ) );
+				Assert.That( result[ 2 ].AsList()[ 2 ], Is.EqualTo( ( MessagePackObject )0x28 ) );
+				Assert.That( result[ 3 ].IsNil );
+				Assert.That( result[ 4 ], Is.EqualTo( ( MessagePackObject )0x0 ) );
+			}
+
+		}
+
 		private void TestIssue10_Reader( Inner inner )
 		{
 			var serializer = CreateTarget<Outer>();
@@ -593,6 +616,6 @@ namespace MsgPack.Serialization
 	public class WithReadOnlyProperty
 	{
 		public int Number { get; set; }
-		public string AsString{get { return this.Number.ToString(); }}
+		public string AsString { get { return this.Number.ToString(); } }
 	}
 }

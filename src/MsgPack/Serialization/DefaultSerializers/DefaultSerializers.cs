@@ -18,6 +18,10 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
@@ -32,11 +36,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_DateTimeMessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.DateTime value )
 		{
 			packer.Pack( MessagePackConvert.FromDateTime( value ) );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.DateTime UnpackFromCore( Unpacker unpacker )
 		{
 			try
@@ -59,11 +65,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_DateTimeOffsetMessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.DateTimeOffset value )
 		{
 			packer.Pack( MessagePackConvert.FromDateTimeOffset( value ) );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.DateTimeOffset UnpackFromCore( Unpacker unpacker )
 		{
 			try
@@ -86,11 +94,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_BooleanMessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.Boolean value )
 		{
 			packer.Pack( value );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.Boolean UnpackFromCore( Unpacker unpacker )
 		{
 			try
@@ -109,11 +119,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_ByteMessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.Byte value )
 		{
 			packer.Pack( value );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.Byte UnpackFromCore( Unpacker unpacker )
 		{
 			try
@@ -132,11 +144,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_CharMessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.Char value )
 		{
 			packer.Pack( ( System.UInt16 )value );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.Char UnpackFromCore( Unpacker unpacker )
 		{
 			try
@@ -159,11 +173,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_DecimalMessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.Decimal value )
 		{
 			packer.PackString( value.ToString( "G", CultureInfo.InvariantCulture ) );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.Decimal UnpackFromCore( Unpacker unpacker )
 		{
 			try
@@ -186,11 +202,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_DoubleMessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.Double value )
 		{
 			packer.Pack( value );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.Double UnpackFromCore( Unpacker unpacker )
 		{
 			try
@@ -209,11 +227,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_GuidMessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.Guid value )
 		{
 			packer.PackRaw( value.ToByteArray() );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.Guid UnpackFromCore( Unpacker unpacker )
 		{
 			try
@@ -236,11 +256,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_Int16MessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.Int16 value )
 		{
 			packer.Pack( value );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.Int16 UnpackFromCore( Unpacker unpacker )
 		{
 			try
@@ -259,11 +281,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_Int32MessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.Int32 value )
 		{
 			packer.Pack( value );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.Int32 UnpackFromCore( Unpacker unpacker )
 		{
 			try
@@ -282,11 +306,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_Int64MessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.Int64 value )
 		{
 			packer.Pack( value );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.Int64 UnpackFromCore( Unpacker unpacker )
 		{
 			try
@@ -305,11 +331,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_SByteMessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.SByte value )
 		{
 			packer.Pack( value );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.SByte UnpackFromCore( Unpacker unpacker )
 		{
 			try
@@ -328,11 +356,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_SingleMessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.Single value )
 		{
 			packer.Pack( value );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.Single UnpackFromCore( Unpacker unpacker )
 		{
 			try
@@ -351,11 +381,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_TimeSpanMessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.TimeSpan value )
 		{
 			packer.Pack( value.Ticks );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.TimeSpan UnpackFromCore( Unpacker unpacker )
 		{
 			System.Int64 ctorArgument;
@@ -377,11 +409,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_UInt16MessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.UInt16 value )
 		{
 			packer.Pack( value );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.UInt16 UnpackFromCore( Unpacker unpacker )
 		{
 			try
@@ -400,11 +434,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_UInt32MessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.UInt32 value )
 		{
 			packer.Pack( value );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.UInt32 UnpackFromCore( Unpacker unpacker )
 		{
 			try
@@ -423,11 +459,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_UInt64MessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.UInt64 value )
 		{
 			packer.Pack( value );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.UInt64 UnpackFromCore( Unpacker unpacker )
 		{
 			try
@@ -447,11 +485,13 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public System_Collections_Specialized_BitVector32MessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.Collections.Specialized.BitVector32 value )
 		{
 			packer.Pack( value.Data );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.Collections.Specialized.BitVector32 UnpackFromCore( Unpacker unpacker )
 		{
 			System.Int32 ctorArgument;
@@ -469,17 +509,19 @@ namespace MsgPack.Serialization.DefaultSerializers
 	}
 #endif // !SILVERLIGHT && !NETFX_CORE
 
-#if !WINDOWS_PHONE && !NETFX_35 && !UNITY_ANDROID && !UNITY_IPHONE
+#if !WINDOWS_PHONE && !NETFX_35 && !UNITY
 	internal sealed class System_Numerics_BigIntegerMessagePackSerializer : MessagePackSerializer< System.Numerics.BigInteger >
 	{
 		public System_Numerics_BigIntegerMessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override void PackToCore( Packer packer, System.Numerics.BigInteger value )
 		{
 			packer.PackRaw( value.ToByteArray() );
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal sealed override  System.Numerics.BigInteger UnpackFromCore( Unpacker unpacker )
 		{
 			try
@@ -496,5 +538,5 @@ namespace MsgPack.Serialization.DefaultSerializers
 			}
 		}
 	}
-#endif // !WINDOWS_PHONE && !NETFX_35 && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !WINDOWS_PHONE && !NETFX_35 && !UNITY
 }

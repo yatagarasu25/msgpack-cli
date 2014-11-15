@@ -18,10 +18,14 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 using System.Diagnostics.Contracts;
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 using System.Text;
 
 namespace MsgPack
@@ -33,6 +37,7 @@ namespace MsgPack
 	{
 		private static readonly Encoding _utf8NonBomStrict = new UTF8Encoding( false, true );
 		private static readonly Encoding _utf8NonBom = new UTF8Encoding( false, false );
+		private const long _ticksToMilliseconds = 10000;
 
 		internal static Encoding Utf8NonBom
 		{
@@ -59,9 +64,9 @@ namespace MsgPack
 				throw new ArgumentNullException( "value" );
 			}
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 			return _utf8NonBom.GetBytes( value );
@@ -85,9 +90,9 @@ namespace MsgPack
 				throw new ArgumentNullException( "value" );
 			}
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 			return _utf8NonBomStrict.GetString( value, 0, value.Length );
@@ -106,7 +111,7 @@ namespace MsgPack
 		/// </returns>
 		public static DateTimeOffset ToDateTimeOffset( long value )
 		{
-			return _unixEpocUtc.AddMilliseconds( value );
+			return _unixEpocUtc.AddTicks( value * _ticksToMilliseconds );
 		}
 
 		/// <summary>
@@ -120,7 +125,7 @@ namespace MsgPack
 		/// </returns>
 		public static DateTime ToDateTime( long value )
 		{
-			return _unixEpocUtc.AddMilliseconds( value );
+			return _unixEpocUtc.AddTicks( value * _ticksToMilliseconds );
 		}
 
 		/// <summary>
@@ -132,7 +137,8 @@ namespace MsgPack
 		/// </returns>
 		public static long FromDateTimeOffset( DateTimeOffset value )
 		{
-			return ( long )value.ToUniversalTime().Subtract( _unixEpocUtc ).TotalMilliseconds;
+			// Note: microseconds and nanoseconds should always truncated, so deviding by integral is suitable.
+			return value.ToUniversalTime().Subtract( _unixEpocUtc ).Ticks / _ticksToMilliseconds;
 		}
 
 		/// <summary>
@@ -144,7 +150,8 @@ namespace MsgPack
 		/// </returns>
 		public static long FromDateTime( DateTime value )
 		{
-			return ( long )value.ToUniversalTime().Subtract( _unixEpocUtc ).TotalMilliseconds;
+			// Note: microseconds and nanoseconds should always truncated, so deviding by integral is suitable.
+			return value.ToUniversalTime().Subtract( _unixEpocUtc ).Ticks / _ticksToMilliseconds;
 		}
 	}
 }

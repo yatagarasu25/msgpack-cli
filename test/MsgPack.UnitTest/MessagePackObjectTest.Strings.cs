@@ -19,6 +19,7 @@
 #endregion -- License Terms --
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 #if !MSTEST
@@ -80,7 +81,7 @@ namespace MsgPack
 			Assert.Throws<ArgumentNullException>( () => target.AsString( null ) );
 		}
 
-#if !NETFX_CORE
+#if !NETFX_CORE && !SILVERLIGHT
 		[Test]
 		public void TestAsString1_EncodingIsUtf32_SpecifyUtf32_Success()
 		{
@@ -101,11 +102,11 @@ namespace MsgPack
 		{
 #if MONO || XAMDROID
 			Assert.Inconclusive( "UTF32Encoding does not throw exception on Mono FCL." );
-#endif
+#endif // MONO || XAMDROID
 			var target = new MessagePackObject( new byte[] { 0xFF } );
 			Assert.Throws<InvalidOperationException>( () => target.AsString( new UTF32Encoding( bigEndian: false, byteOrderMark: false, throwOnInvalidCharacters: true ) ) );
 		}
-#endif
+#endif // !NETFX_CORE && !SILVERLIGHT
 
 		[Test]
 		public void TestAsString1_Null_Success()

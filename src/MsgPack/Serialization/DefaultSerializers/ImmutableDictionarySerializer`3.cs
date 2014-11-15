@@ -18,6 +18,10 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -83,11 +87,11 @@ namespace MsgPack.Serialization.DefaultSerializers
 			}
 
 			var result = method.MakeGenericMethod( typeof( TKey ), typeof( TValue ) );
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			return result.CreateDelegate( typeof( Func<KeyValuePair<TKey, TValue>[], T> ) ) as Func<KeyValuePair<TKey, TValue>[], T>;
 #else
 			return Delegate.CreateDelegate( typeof( Func<KeyValuePair<TKey, TValue>[], T> ), result ) as Func<KeyValuePair<TKey, TValue>[], T>;
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 		}
 
 		private readonly MessagePackSerializer<TKey> _keySerializer;
@@ -100,6 +104,7 @@ namespace MsgPack.Serialization.DefaultSerializers
 			this._valueSerializer = ownerContext.GetSerializer<TValue>();
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal override void PackToCore( Packer packer, T objectTree )
 		{
 			packer.PackMapHeader( objectTree.Count() );
@@ -111,6 +116,7 @@ namespace MsgPack.Serialization.DefaultSerializers
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal override T UnpackFromCore( Unpacker unpacker )
 		{
 			if ( !unpacker.IsMapHeader )

@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
-using MsgPack.Serialization.AbstractSerializers;
 #if !MSTEST
 using NUnit.Framework;
 #else
@@ -54,7 +53,7 @@ namespace MsgPack.Serialization
 		private const string PublicFieldPlain = "PublicFieldPlain";
 		private const string PublicReadOnlyFieldPlain = "PublicReadOnlyFieldPlain";
 		private const string NonPublicFieldPlain = "NonPublicFieldPlain";
-#if !NETFX_CORE
+#if !NETFX_CORE && !WINDOWS_PHONE
 		private const string NonSerializedPublicField = "NonSerializedPublicField";
 		private const string NonSerializedPublicReadOnlyField = "NonSerializedPublicReadOnlyField";
 		private const string NonSerializedNonPublicField = "NonSerializedNonPublicField";
@@ -74,10 +73,10 @@ namespace MsgPack.Serialization
 		[Test]
 		public void TestAnnotated()
 		{
-			TestCore<AnnotatedClass>( 
-				PublicProperty, NonPublicProperty, PublicField, NonPublicField, 
-#if !NETFX_CORE
-				NonSerializedPublicField, NonSerializedNonPublicField, 
+			TestCore<AnnotatedClass>(
+				PublicProperty, NonPublicProperty, PublicField, NonPublicField,
+#if !NETFX_CORE && !WINDOWS_PHONE
+				NonSerializedPublicField, NonSerializedNonPublicField,
 #endif
 				CollectionReadOnlyProperty );
 		}
@@ -87,17 +86,31 @@ namespace MsgPack.Serialization
 		{
 			// includes issue33
 			TestCore<DataMamberClass>(
-				PublicProperty, NonPublicProperty, PublicField, NonPublicField, 
-#if !NETFX_CORE
-				NonSerializedPublicField, NonSerializedNonPublicField, 
+				PublicProperty, NonPublicProperty, PublicField, NonPublicField,
+#if !NETFX_CORE && !WINDOWS_PHONE
+				NonSerializedPublicField, NonSerializedNonPublicField,
 #endif
 				CollectionReadOnlyProperty );
+		}
+
+		[Test]
+		public void TestAliasInMessagePackMember()
+		{
+			var target = SerializationTarget.GetTargetMembers( typeof( AnnotatedClass ) );
+			Assert.That( target.Any( m => m.Contract.Name == "Alias" && m.Contract.Name != m.Member.Name ) );
+		}
+
+		[Test]
+		public void TestAliasInDataMember()
+		{
+			var target = SerializationTarget.GetTargetMembers( typeof( DataMamberClass ) );
+			Assert.That( target.Any( m => m.Contract.Name == "Alias" && m.Contract.Name != m.Member.Name ) );
 		}
 
 		private static void TestCore<T>( params string[] expectedMemberNames )
 		{
 			var expected = expectedMemberNames.OrderBy( n => n ).ToArray();
-			var actual = SerializationTarget.GetTargetMembers( typeof( T ) ).OrderBy( m => m.Contract.Name ).Select( m => m.Contract.Name ).ToArray();
+			var actual = SerializationTarget.GetTargetMembers( typeof( T ) ).OrderBy( m => m.Member.Name ).Select( m => m.Member.Name ).ToArray();
 			Assert.That( actual, Is.EqualTo( expected ), String.Join( ", ", actual ) );
 		}
 

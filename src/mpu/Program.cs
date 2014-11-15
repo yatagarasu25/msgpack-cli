@@ -91,7 +91,7 @@ namespace mpu
 						_ => action = Action.ShowHelp
 					},
 					{
-						"l|library:", "[required] Copy MsgPack source as assets library tree.",
+						"l|library", "[required] Copy MsgPack source as assets library tree.",
 						_ => action = action != null ? Action.ShowHelp : Action.BuildAssetLibrary
 					},
 					{
@@ -99,7 +99,7 @@ namespace mpu
 						_ => action = action != null ? Action.ShowHelp : Action.GenerateSerializers
 					},
 					{
-						"p|project=", "[library, optional] Specify MsgPack.Xamarin.iOS.csproj path. Default is './src/MsgPack.Xamarin.iOS/MsgPack.Xamarin.iOS.csproj'.",
+						"p|project=", "[library, optional] Specify MsgPack.Unity3D.csproj path. Default is './src/MsgPack.Unity3D/MsgPack.Unity3D.csproj'.",
 						value => sourceProjectPath = value
 					},
 					{
@@ -117,6 +117,10 @@ namespace mpu
 					{
 						"n|namespace=", "[serializer, optional] Specify namespace for generated serializer types.",
 						value => configuration.Namespace = value
+					},
+					{
+						"internal", "[serializer, optional] Specify generated source code will be internal to MsgPack library itself. This option is required if you import MsgPack sources instead of an assembly to your Assets.",
+						_ => configuration.IsInternalToMsgPackLibrary = true
 					},
 					{
 						"method=", "[serializer, optional] Specify serialization method for generated serializers. Valid value is Array or Map. Default is 'Array'.",
@@ -159,6 +163,8 @@ namespace mpu
 				}
 				case Action.GenerateSerializers:
 				{
+					configuration.OutputDirectory = outputDirectoryPath;
+
 					GenerateSerializers(
 						sourceFilePathes,
 						referenceAssemblies.Distinct().ToArray(),

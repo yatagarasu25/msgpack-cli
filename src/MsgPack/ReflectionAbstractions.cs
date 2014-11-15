@@ -18,11 +18,16 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.Collections.Generic;
-#if !UNITY_IPHONE && !UNITY_ANDROID
+using System.Diagnostics;
+#if !UNITY
 using System.Diagnostics.Contracts;
-#endif // !UNITY_IPHONE && !UNITY_ANDROID
+#endif // !UNITY
 using System.Linq;
 using System.Reflection;
 
@@ -30,6 +35,7 @@ namespace MsgPack
 {
 	internal static class ReflectionAbstractions
 	{
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Performance", "CA1802:UseLiteralsWhereAppropriate", Justification = "Same as FCL" )]
 		public static readonly char TypeDelimiter = '.';
 		public static readonly Type[] EmptyTypes = new Type[ 0 ];
 
@@ -87,6 +93,7 @@ namespace MsgPack
 #endif
 		}
 
+#if DEBUG
 		public static bool GetContainsGenericParameters( this Type source )
 		{
 #if NETFX_CORE
@@ -95,7 +102,9 @@ namespace MsgPack
 			return source.ContainsGenericParameters;
 #endif
 		}
+#endif // DEBUG
 
+#if !NETFX_35
 		public static Assembly GetAssembly( this Type source )
 		{
 #if NETFX_CORE
@@ -104,7 +113,9 @@ namespace MsgPack
 			return source.Assembly;
 #endif
 		}
+#endif // NETFX_35
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Wrong detection" )]
 		public static bool GetIsPublic( this Type source )
 		{
 #if NETFX_CORE
@@ -153,6 +164,7 @@ namespace MsgPack
 			return source.GetRuntimeProperty( name );
 		}
 
+#if DEBUG
 		public static IEnumerable<PropertyInfo> GetProperties( this Type source )
 		{
 			return source.GetRuntimeProperties();
@@ -162,6 +174,7 @@ namespace MsgPack
 		{
 			return source.GetRuntimeField( name );
 		}
+#endif
 
 		public static ConstructorInfo GetConstructor( this Type source, Type[] parameteres )
 		{
@@ -193,6 +206,7 @@ namespace MsgPack
 			return source.GetMethod;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "containsNonPublic", Justification = "For API compabitility" )]
 		public static MethodInfo GetGetMethod( this PropertyInfo source, bool containsNonPublic )
 		{
 			Contract.Assert( containsNonPublic ); // false is not supported now.
@@ -205,6 +219,7 @@ namespace MsgPack
 			return source.SetMethod;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "containsNonPublic", Justification = "For API compabitility" )]
 		public static MethodInfo GetSetMethod( this PropertyInfo source, bool containsNonPublic )
 		{
 			Contract.Assert( containsNonPublic ); // false is not supported now.
@@ -220,11 +235,6 @@ namespace MsgPack
 		public static InterfaceMapping GetInterfaceMap( this Type source, Type interfaceType )
 		{
 			return source.GetTypeInfo().GetRuntimeInterfaceMap( interfaceType );
-		}
-
-		public static bool IsDefined( this Type source, Type attributeType )
-		{
-			return source.GetTypeInfo().IsDefined( attributeType );
 		}
 
 		public static IEnumerable<CustomAttributeData> GetCustomAttributesData( this Type source )
@@ -247,11 +257,6 @@ namespace MsgPack
 			return source.MemberName;
 		}
 #else
-		public static bool IsDefined( this MemberInfo source, Type attributeType )
-		{
-			return Attribute.IsDefined( source, attributeType );
-		}
-
 		public static T GetCustomAttribute<T>( this MemberInfo source )
 			where T : Attribute
 		{
@@ -277,12 +282,12 @@ namespace MsgPack
 #endif // !SILVERLIGHT
 #endif // NETFX_CORE
 
-#if NETFX_35 || UNITY_IPHONE || UNITY_ANDROID
+#if NETFX_35 || UNITY
 		public static IEnumerable<CustomAttributeData> GetCustomAttributesData( this MemberInfo source )
 		{
 			return CustomAttributeData.GetCustomAttributes( source );
 		}
-#endif // NETFX_35 || UNITY_IPHONE || UNITY_ANDROID
+#endif // NETFX_35 || UNITY
 
 #if SILVERLIGHT
 		public static IEnumerable<Attribute> GetCustomAttributesData( this MemberInfo source )
@@ -352,11 +357,11 @@ namespace MsgPack
 		}
 #endif // SILVERLIGHT
 
-#if NETFX_35 || NETFX_40
+#if NETFX_40
 		public static Delegate CreateDelegate( this MethodInfo source, Type delegateType )
 		{
 			return Delegate.CreateDelegate( delegateType, source );
 		}
-#endif // NETFX_35 || NETFX_40
+#endif // NETFX_40
 	}
 }

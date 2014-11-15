@@ -18,14 +18,18 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 using System.Diagnostics.Contracts;
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 using System.Globalization;
 using System.Linq;
 
@@ -84,7 +88,9 @@ namespace MsgPack
 		{
 			get
 			{
+#if !UNITY
 				this.AssertInvariant();
+#endif // !UNITY
 				return this._dictionary == null ? this._keys.Count : this._dictionary.Count;
 			}
 		}
@@ -123,9 +129,9 @@ namespace MsgPack
 					ThrowKeyNotNilException( "key" );
 				}
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 				Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 				MessagePackObject result;
@@ -145,17 +151,16 @@ namespace MsgPack
 
 				this.VerifyIsNotFrozen();
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 				Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
-
 
 				this.AssertInvariant();
+#endif // !UNITY
 				this.AddCore( key, value, true );
 			}
 		}
 
-#if !WINDOWS_PHONE && !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 		/// <summary>
 		///		Gets an <see cref="KeySet"/> containing the keys of the <see cref="MessagePackObjectDictionary"/>.
 		/// </summary>
@@ -189,11 +194,13 @@ namespace MsgPack
 		{
 			get
 			{
+#if !UNITY
 				this.AssertInvariant();
+#endif // !UNITY
 				return new KeyCollection( this );
 			}
 		}
-#endif // !WINDOWS_PHONE && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 		/// <summary>
 		///		Gets an <see cref="ValueCollection"/> containing the values of the <see cref="MessagePackObjectDictionary"/>.
@@ -209,7 +216,9 @@ namespace MsgPack
 		{
 			get
 			{
+#if !UNITY
 				this.AssertInvariant();
+#endif // !UNITY
 				return new ValueCollection( this );
 			}
 		}
@@ -262,9 +271,9 @@ namespace MsgPack
 					throw new ArgumentNullException( "key" );
 				}
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 				Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 				var typedKey = ValidateObjectArgument( key, "key" );
@@ -290,9 +299,9 @@ namespace MsgPack
 
 				this.VerifyIsNotFrozen();
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 				Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 				var typedKey = ValidateObjectArgument( key, "key" );
@@ -346,9 +355,9 @@ namespace MsgPack
 				throw new ArgumentOutOfRangeException( "initialCapacity" );
 			}
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 			if ( initialCapacity <= Threashold )
@@ -383,9 +392,9 @@ namespace MsgPack
 				throw new ArgumentNullException( "dictionary" );
 			}
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 			if ( dictionary.Count <= Threashold )
@@ -433,10 +442,10 @@ namespace MsgPack
 			}
 		}
 
+#if !UNITY
 		[Conditional( "DEBUG" )]
 		private void AssertInvariant()
 		{
-#if !UNITY_ANDROID && !UNITY_IPHONE
 			if ( this._dictionary == null )
 			{
 				Contract.Assert( this._keys != null );
@@ -449,8 +458,8 @@ namespace MsgPack
 				Contract.Assert( this._keys == null );
 				Contract.Assert( this._values == null );
 			}
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
 		}
+#endif // !UNITY
 
 		private static MessagePackObject ValidateObjectArgument( object obj, string parameterName )
 		{
@@ -497,7 +506,7 @@ namespace MsgPack
 			switch ( WinRTCompatibility.GetTypeCode( value.GetType() ) )
 #else
 			switch ( Type.GetTypeCode( value.GetType() ) )
-#endif
+#endif // NETFX_CORE
 			{
 				case TypeCode.Boolean:
 				{
@@ -588,12 +597,14 @@ namespace MsgPack
 				ThrowKeyNotNilException( "key" );
 			}
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
-			this.AssertInvariant();
+#if !UNITY
+				this.AssertInvariant();
+#endif // !UNITY
 			return
 				this._dictionary == null
 				? this._keys.Contains( key, MessagePackObjectEqualityComparer.Instance )
@@ -612,7 +623,9 @@ namespace MsgPack
 		/// </remarks>
 		public bool ContainsValue( MessagePackObject value )
 		{
-			this.AssertInvariant();
+#if !UNITY
+				this.AssertInvariant();
+#endif // !UNITY
 			return
 				this._dictionary == null 
 				? this._values.Contains( value, MessagePackObjectEqualityComparer.Instance ) 
@@ -686,12 +699,11 @@ namespace MsgPack
 				ThrowKeyNotNilException( "key" );
 			}
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
-
 
 			this.AssertInvariant();
+#endif // !UNITY
 
 			if ( this._dictionary == null )
 			{
@@ -701,14 +713,12 @@ namespace MsgPack
 					value = MessagePackObject.Nil;
 					return false;
 				}
-				// ReSharper disable once RedundantIfElseBlock
 				else
 				{
 					value = this._values[ index ];
 					return true;
 				}
 			}
-			// ReSharper disable once RedundantIfElseBlock
 			else
 			{
 				return this._dictionary.TryGetValue( key, out value );
@@ -750,9 +760,9 @@ namespace MsgPack
 
 			this.VerifyIsNotFrozen();
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 			this.AddCore( key, value, false );
@@ -760,9 +770,9 @@ namespace MsgPack
 
 		private void AddCore( MessagePackObject key, MessagePackObject value, bool allowOverwrite )
 		{
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.Assert( !key.IsNil );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 			if ( this._dictionary == null )
 			{
@@ -848,9 +858,9 @@ namespace MsgPack
 
 			this.VerifyIsNotFrozen();
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 			this.AddCore( item.Key, item.Value, false );
@@ -865,9 +875,9 @@ namespace MsgPack
 
 			this.VerifyIsNotFrozen();
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 			var typedKey = ValidateObjectArgument( key, "key" );
@@ -902,9 +912,9 @@ namespace MsgPack
 
 			this.VerifyIsNotFrozen();
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 			return this.RemoveCore( key, default( MessagePackObject ), false );
@@ -912,10 +922,11 @@ namespace MsgPack
 
 		private bool RemoveCore( MessagePackObject key, MessagePackObject value, bool checkValue )
 		{
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.Assert( !key.IsNil );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
 			this.AssertInvariant();
+#endif // !UNITY
+
 			if ( this._dictionary == null )
 			{
 				int index = this._keys.FindIndex( item => item == key );
@@ -968,9 +979,9 @@ namespace MsgPack
 
 			this.VerifyIsNotFrozen();
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 			return this.RemoveCore( item.Key, item.Value, true );
@@ -985,9 +996,9 @@ namespace MsgPack
 
 			this.VerifyIsNotFrozen();
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 
 			var typedKey = ValidateObjectArgument( key, "key" );
@@ -1009,7 +1020,9 @@ namespace MsgPack
 		{
 			this.VerifyIsNotFrozen();
 
+#if !UNITY
 			this.AssertInvariant();
+#endif // !UNITY
 
 			if ( this._dictionary == null )
 			{

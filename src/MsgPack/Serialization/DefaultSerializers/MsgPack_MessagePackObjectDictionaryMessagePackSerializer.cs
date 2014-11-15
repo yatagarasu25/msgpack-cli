@@ -28,6 +28,8 @@ namespace MsgPack.Serialization.DefaultSerializers
 		public MsgPack_MessagePackObjectDictionaryMessagePackSerializer( SerializationContext ownerContext )
 			: base( ownerContext ) { }
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "1", Justification = "By design" )]
 		protected internal override void PackToCore( Packer packer, MessagePackObjectDictionary objectTree )
 		{
 			packer.PackMapHeader( objectTree.Count );
@@ -38,6 +40,7 @@ namespace MsgPack.Serialization.DefaultSerializers
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "0", Justification = "By design" )]
 		protected internal override MessagePackObjectDictionary UnpackFromCore( Unpacker unpacker )
 		{
 			if ( !unpacker.IsMapHeader )
@@ -72,7 +75,20 @@ namespace MsgPack.Serialization.DefaultSerializers
 					throw SerializationExceptions.NewUnexpectedEndOfStream();
 				}
 
-				collection.Add( key, unpacker.LastReadData );
+				if ( unpacker.IsCollectionHeader )
+				{
+					MessagePackObject value;
+					if ( !unpacker.UnpackSubtreeDataCore( out value ) )
+					{
+						throw SerializationExceptions.NewUnexpectedEndOfStream();
+					}
+
+					collection.Add( key, value );
+				}
+				else
+				{
+					collection.Add( key, unpacker.LastReadData );
+				}
 			}
 		}
 	}

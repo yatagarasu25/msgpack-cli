@@ -18,6 +18,10 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.Reflection;
 
@@ -28,8 +32,14 @@ namespace MsgPack.Serialization
 		public static readonly CollectionTraits NotCollection = new CollectionTraits( CollectionDetailedKind.NotCollection, null, null, null, null );
 		public static readonly CollectionTraits Unserializable = new CollectionTraits( CollectionDetailedKind.Unserializable, null, null, null, null );
 
+#if UNITY
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields" )]
+#endif // UNITY
 		public readonly MethodInfo GetEnumeratorMethod;
 		public readonly MethodInfo AddMethod;
+#if UNITY
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields" )]
+#endif // UNITY
 		public readonly PropertyInfo CountProperty;
 		public readonly Type ElementType;
 
@@ -45,9 +55,9 @@ namespace MsgPack.Serialization
 					case CollectionDetailedKind.GenericCollection:
 					case CollectionDetailedKind.GenericEnumerable:
 					case CollectionDetailedKind.GenericList:
-#if !NETFX_35 && !UNITY_ANDROID && !UNITY_IPHONE
+#if !NETFX_35 && !UNITY
 					case CollectionDetailedKind.GenericSet:
-#endif // !NETFX_35 && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !NETFX_35 && !UNITY
 					case CollectionDetailedKind.NonGenericCollection:
 					case CollectionDetailedKind.NonGenericEnumerable:
 					case CollectionDetailedKind.NonGenericList:

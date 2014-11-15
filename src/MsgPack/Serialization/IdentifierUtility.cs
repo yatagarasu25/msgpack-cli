@@ -18,33 +18,22 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.Text;
 using MsgPack.Serialization.Reflection;
 
 namespace MsgPack.Serialization
 {
+#if !UNITY
 	/// <summary>
 	///		Utilities related to member/type ID.
 	/// </summary>
 	internal static class IdentifierUtility
 	{
-		/// <summary>
-		///		Builds the name of the generating method.
-		/// </summary>
-		/// <param name="operation">The operation.</param>
-		/// <param name="targetType">Type of the target.</param>
-		/// <param name="targetMemberName">Name of the target member.</param>
-		/// <returns>Name of the method.</returns>
-		public static string BuildMethodName( string operation, Type targetType, string targetMemberName )
-		{
-#if !NETFX_35 && !UNITY_ANDROID && !UNITY_IPHONE
-			return String.Join( "_", operation, EscapeTypeName( targetType ), targetMemberName );
-#else
-			return String.Join( "_", new string[] { operation, EscapeTypeName( targetType ), targetMemberName } );
-#endif
-		}
-
 		public static string EscapeTypeName( Type type )
 		{
 			return EscapeTypeName( type.GetFullName() );
@@ -134,4 +123,5 @@ namespace MsgPack.Serialization
 			return result.ToString();
 		}
 	}
+#endif // !UNITY
 }

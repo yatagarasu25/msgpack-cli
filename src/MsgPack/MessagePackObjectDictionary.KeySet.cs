@@ -18,14 +18,18 @@
 //
 #endregion -- License Terms --
 
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WII || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS3 || UNITY_XBOX360 || UNITY_FLASH || UNITY_BKACKBERRY || UNITY_WINRT
+#define UNITY
+#endif
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 using System.Diagnostics.Contracts;
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 namespace MsgPack
 {
@@ -40,14 +44,14 @@ namespace MsgPack
 		[DebuggerDisplay( "Count={Count}" )]
 		[DebuggerTypeProxy( typeof( CollectionDebuggerProxy<> ) )]
 		[SuppressMessage( "Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = "ICollection implementing dictionary should return ICollection implementing values." )]
-#if !WINDOWS_PHONE && !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 		public sealed partial class KeySet :
 #if !NETFX_35
 			ISet<MessagePackObject>,
-#endif // !NETFX_35 && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !NETFX_35
 #else
 		public sealed partial class KeyCollection :
-#endif
+#endif // !UNITY
 			// ReSharper disable once RedundantExtendsListEntry
 			ICollection<MessagePackObject>, ICollection
 		{
@@ -79,15 +83,15 @@ namespace MsgPack
 				get { return this; }
 			}
 
-#if !WINDOWS_PHONE && !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 			internal KeySet( MessagePackObjectDictionary dictionary )
 #else
 			internal KeyCollection( MessagePackObjectDictionary dictionary )
-#endif
+#endif // !UNITY
 			{
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 				Contract.Assert( dictionary != null );
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 				this._dictionary = dictionary;
 			}
@@ -106,9 +110,9 @@ namespace MsgPack
 					throw new ArgumentNullException( "array" );
 				}
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 				Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 				CollectionOperation.CopyTo( this, this.Count, 0, array, 0, this.Count );
 			}
@@ -178,9 +182,9 @@ namespace MsgPack
 					throw new ArgumentException( "Specified array is too small to complete copy operation.", "array" );
 				}
 
-#if !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 				Contract.EndContractBlock();
-#endif // !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 				CollectionOperation.CopyTo( this, this.Count, index, array, arrayIndex, count );
 			}
@@ -218,7 +222,7 @@ namespace MsgPack
 				throw new NotSupportedException();
 			}
 
-#if !WINDOWS_PHONE && !UNITY_ANDROID && !UNITY_IPHONE
+#if !UNITY
 #if !NETFX_35
 			bool ISet<MessagePackObject>.Add( MessagePackObject item )
 			{
@@ -349,7 +353,7 @@ namespace MsgPack
 				throw new NotSupportedException();
 			}
 #endif // !NETFX_35
-#endif // !WINDOWS_PHONE && !UNITY_ANDROID && !UNITY_IPHONE
+#endif // !UNITY
 
 			/// <summary>
 			///		Returns an enumerator that iterates through this collction.
